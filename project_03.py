@@ -290,7 +290,11 @@ class Classification():
         birthdays = defaultdict(list) 
         # add each person
         for person in self.people.values():
-            birthdays[person.birthday].append(person.name)   # what if the birthday is not known?
+            if person.birthday == 'NA' or person.birthday == '':
+                continue
+            else:
+                birthdays[person.birthday].append(person.name)
+                
 
         multiple_births = dict()  # multiple_births[date] = list of people with that birthday
         for dt, names in birthdays.items():
