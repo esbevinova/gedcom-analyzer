@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 from datetime import date
 from datetime import datetime
+from collections import defaultdict
 
 def valid_tag(file_name):
     """Function reads .ged file line by line,
@@ -71,7 +72,6 @@ class Person():
 
         self.get_age(self.birthday, self.death, self.today)
         
-
     def get_age(self, birthday, death, today):
         """Function uses birthday date, death date and today's date to calculate
         age of the person or age of the person at death"""
@@ -86,7 +86,6 @@ class Person():
             return self.age
         else:
             return 'NA'
-
 
     def pt_row(self):
         """Function creates a row for person table"""
@@ -122,8 +121,6 @@ class Person():
         return [self.i_d, self.name, self.gender, self.birthday, self.age, self.alive, self.death, self.child, self.spouse]
 
    
-
-
 class Family():
     """Class Family"""
 
@@ -162,21 +159,25 @@ class Family():
         return [self.i_d, self.married, divorced, self.husb_id, people[self.husb_id].name, self.wife_id, people[self.wife_id].name, self.children]
 
 
-
 class Classification():
     """Class parses through data in GEDCOM file,
     creates instances of class Person for 'INDI' data,
     creates instances of class Family for 'FAM' data"""
 
-    def __init__(self, valid_lines):
-        """Function init"""
+    def __init__(self, file_name):
+        """Function init""" 
+        filtered_file = valid_tag(file_name)
+
+        valid_lines = [] 
+        for line in filtered_file:
+            valid_lines.append(line)    #Combine valid data lines into a list of elements
+
         self.valid_lines = valid_lines
         self.people = dict()
         self.families = dict()
 
         self.entity = dict()
         self.get_entities(valid_lines)
-
 
     def get_entities(self, valid_lines):
         """Function parses through a list of data from a GEDCOM file
@@ -194,8 +195,7 @@ class Classification():
                 info = []
                 self.entity[i] = info
                 continue
-                
-                       
+                                      
     def make_entity(self, entity):
         """Function parses through data in self.entity dictionary,
         for 'INDI' data an instance of class person is created,
@@ -212,8 +212,7 @@ class Classification():
         divorced = ''
         husb_id = ''
         wife_id = ''
-        children = []
-        
+        children = []       
         
         for key, value in self.entity.items():
             #Person entity
@@ -272,13 +271,51 @@ class Classification():
                                 divorced = dv[2]
                             else:
                                 divorced = 'NA'
-
-                    
+                   
                 self.families[key[2]] = Family(key[2], married, divorced, husb_id, 
                                     wife_id, children)   #create an instance of class family
                 children = []
         self.entity.clear()
+    
+    def us31_living_singles(self):
+        """User Story 31: List all living singles over 30 who have never been married in a GEDCOM file"""
+        singles = list()
+        for person in self.people.values():
+            if person.alive and person.age != 'NA' and person.age != '' and int(person.age) > 30 and (person.spouse == 'NA' or person.spouse == ''):
+                singles.append((person.i_d,person.name))
+        return singles
+    
+    def us32_multiple_births(self):
+        """User Story 32: List all multiple births on the same date in a GEDCOM file"""
+        birthdays = defaultdict(list) 
+        # add each person
+        for person in self.people.values():
+            birthdays[person.birthday].append(person.name)   # what if the birthday is not known?
 
+        multiple_births = dict()  # multiple_births[date] = list of people with that birthday
+        for dt, names in birthdays.items():
+            if len(names) > 1:
+                multiple_births[dt] = names
+
+        return multiple_births
+
+    def us31_singles_table(self):
+        """User Story 31: Function prints living_singles() table"""
+        pt = PrettyTable()
+        pt.field_names = ["ID", "Name"]
+        for id, name in self.us31_living_singles():
+            pt.add_row([id, name])
+        print("\n\nUS31: Individuals over 30 living single")
+        print(pt)
+
+    def us32_multiple_births_table(self):
+        """User Story: 32: Function prints multiple_births() table"""
+        pt = PrettyTable()
+        pt.field_names = ['Birthdate', 'People']
+        for dt, people in self.us32_multiple_births().items():
+            pt.add_row([dt, people])  
+        print("\n\nUS32: People sharing birthdays")
+        print(pt)
 
     def person_table(self):
         """Function prints people table """
@@ -298,21 +335,20 @@ class Classification():
         print(pt)
 
 
-
-
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    file_name = '/Users/nadik/Desktop/555/Project1_Nadia_Vedeneyeva.ged'
-    valid_lines = []    
+    file_name = '/Users/katya/Documents/Fall19/555/revised_gedcom/us31_us32.ged'
+  
+    classify = Classification(file_name)
+    
+    classify.person_table() # print the person table
+    classify.family_table() # print the families table
 
-    filtered_file = valid_tag(file_name)
-    for line in filtered_file:
-        valid_lines.append(line)    #Combine valid data lines into a list of elements
-
-    classify = Classification(valid_lines)
-
-    classify.person_table()
-    classify.family_table()
-
-main()
+    # call each of the user stories
+    
+    classify.us31_singles_table()
+    classify.us32_multiple_births_table()
+    
+if __name__ == '__main__':
+    main()
