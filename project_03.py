@@ -67,60 +67,38 @@ class Person():
         self.spouse = spouse
 
         self.today = date.today()
-        self.age = ''
+        self.age = 'NA'
         self.alive = bool
 
-        self.get_age(self.birthday, self.death, self.today)
-        
+        self.get_age(self.birthday, self.death, self.today)     
+
     def get_age(self, birthday, death, today):
         """Function uses birthday date, death date and today's date to calculate
         age of the person or age of the person at death"""
 
-        if len(self.birthday) > 0:  #Check for birthday data
+        if self.birthday == 'NA':
+            self.age = 'NA'
+        else:
             birthday = datetime.strptime(self.birthday, '%d %b %Y')     #Convert birthday to datetime format
-            if len(self.death) > 0: #Check for date of death and if such data available calculate age at time of death
+            if self.death == 'NA':   #Calculate age if person is alive
+                self.age = self.today.year - birthday.year - ((self.today.month, self.today.day) < (birthday.month, birthday.date))
+            else: #Check for date of death and if such data available calculate age at time of death
                 death = datetime.strptime(self.death, '%d %b %Y')   #Convert death to datetime format
                 self.age = death.year - birthday.year - ((death.month, death.day) < (birthday.month, birthday.date))
-            else:   #Calculate age if person is alive
-                self.age = self.today.year - birthday.year - ((self.today.month, self.today.day) < (birthday.month, birthday.date))
-            return self.age
-        else:
-            return 'NA'
+        return self.age
 
     def pt_row(self):
         """Function creates a row for person table"""
 
-        if len(self.death) > 0:     #Check if date of death is available, else assign 'NA'
+        if self.death == 'NA':
+            self.alive = True
+        else:   #Check if date of death is available, else assign 'NA'
             self.death = self.death
             self.alive = False           #Get True/False for alive value
-        else:
-            self.death = 'NA'
-            self.alive = True
 
-        if len(self.gender) > 0:    #Check if person gender is available, else assign 'NA'
-            self.gender = self.gender
-        else:
-            self.gender = 'NA'
-
-        if len(self.birthday) > 0:  #Check if person birthday is available, else assign 'NA for birthday and age'
-            self.birthday = self.birthday
-        else:
-            self.birthday = 'NA'
-            self.age = 'NA'
-
-        if len(self.child) > 0:     #Check if parents' family id is available, else assign 'NA'
-            self.cild = self.child
-        else:
-            self.child = 'NA'
-
-        if len(self.spouse) > 0:    #Check if person is married and what is the family id, else assign 'NA'
-            self.spouse = self.spouse
-        else:
-            self.spouse = 'NA'
-  
         return [self.i_d, self.name, self.gender, self.birthday, self.age, self.alive, self.death, self.child, self.spouse]
 
-   
+
 class Family():
     """Class Family"""
 
@@ -134,29 +112,14 @@ class Family():
         self.married = married 
         self.divorced = divorced
         self.husb_id = husb_id
-        self.husb_name = ''
+        self.husb_name = 'NA'
         self.wife_id = wife_id
-        self.wife_name = ''
+        self.wife_name = 'NA'
         self.children = children
 
     def pt_row(self, people):
         """Function creates a row for family table"""
-        if len(self.married) > 0:   #Check if marriage date is available, else assign 'NA'
-            self.married = self.married
-        else:
-            self.married = 'NA'
-
-        if len(self.divorced) > 0:  #Check if divorce date is available, else assign 'NA'
-            divorced = self.divorced
-        else:
-            divorced = 'NA'
-
-        if len(self.children) > 0:  #Check for children in the family, else assign 'NA'
-            self.children = self.children
-        else:
-            self.children = 'NA'
-
-        return [self.i_d, self.married, divorced, self.husb_id, people[self.husb_id].name, self.wife_id, people[self.wife_id].name, self.children]
+        return [self.i_d, self.married, self.divorced, self.husb_id, people[self.husb_id].name, self.wife_id, people[self.wife_id].name, self.children]
 
 
 class Classification():
@@ -179,6 +142,7 @@ class Classification():
         self.entity = dict()
         self.get_entities(valid_lines)
 
+
     def get_entities(self, valid_lines):
         """Function parses through a list of data from a GEDCOM file
         and devides it into separate entities.
@@ -195,25 +159,25 @@ class Classification():
                 info = []
                 self.entity[i] = info
                 continue
-                                      
+                                     
     def make_entity(self, entity):
         """Function parses through data in self.entity dictionary,
         for 'INDI' data an instance of class person is created,
         for 'FAM' data an instance of class family is created"""
         
-        name = ''
-        gender = ''
-        birthday = ''
-        death = ''
-        child = ''
-        spouse = ''
+        name = 'NA'
+        gender = 'NA'
+        birthday = 'NA'
+        death = 'NA'
+        child = 'NA'
+        spouse = 'NA'
 
-        married = ''
-        divorced = ''
-        husb_id = ''
-        wife_id = ''
-        children = []       
-        
+        married = 'NA'
+        divorced = 'NA'
+        husb_id = 'NA'
+        wife_id = 'NA'
+        children = []
+         
         for key, value in self.entity.items():
             #Person entity
             if key[1] == 'INDI':    
@@ -271,25 +235,60 @@ class Classification():
                                 divorced = dv[2]
                             else:
                                 divorced = 'NA'
-                   
+                    
                 self.families[key[2]] = Family(key[2], married, divorced, husb_id, 
                                     wife_id, children)   #create an instance of class family
                 children = []
         self.entity.clear()
     
+
+    def us04_marriage_before_divorse(self):
+        for family in self.families.values():
+            if family.married == 'NA' or family.divorced == 'NA':
+                continue
+            else:
+                married = datetime.strptime(family.married, '%d %b %Y') 
+                divorced = datetime.strptime(family.divorced, '%d %b %Y') 
+                time_married = divorced.year - married.year - ((divorced.month, divorced.day) < (married.month, married.day))       
+                if time_married < 0:
+                    return "ERROR: FAMILY: US04: (line# goes here) " + family.i_d + ": Divorced " + family.divorced + \
+                    " before married on " + family.married
+                else:
+                    continue
+
+    def us27_individual_ages(self):
+        for person in self.people.values():
+            if person.age == 'NA':
+                continue
+            else:
+                yield person.i_d, person.age
+
+    def us27_ages_table(self):
+        pt = PrettyTable()
+        pt.field_names = ["ID", "AGE"]
+        for i_d, age in self.us27_individual_ages():
+            pt.add_row([i_d, age])
+        print('us27: Ages of individuals')
+        print(pt)
+
+
     def us31_living_singles(self):
         """User Story 31: List all living singles over 30 who have never been married in a GEDCOM file"""
+        # JRR: self.singles = defaultdict()
         singles = list()
         for person in self.people.values():
-            if person.alive and person.age != 'NA' and person.age != '' and int(person.age) > 30 and (person.spouse == 'NA' or person.spouse == ''):
+            if person.alive and person.age != 'NA' and person.age != '' and int(person.age) > 30 and person.spouse == 'NA':
                 singles.append((person.i_d,person.name))
         return singles
     
     def us32_multiple_births(self):
         """User Story 32: List all multiple births on the same date in a GEDCOM file"""
-        birthdays = defaultdict(list) 
+        #self.birthdays = defaultdict()
+        birthdays = defaultdict(list)  # birthdays[date] = list of people with that birthday
+
         # add each person
         for person in self.people.values():
+            #self.birthdays.setdefault(person.birthday, []).append(person.name)
             birthdays[person.birthday].append(person.name)   # what if the birthday is not known?
 
         multiple_births = dict()  # multiple_births[date] = list of people with that birthday
@@ -298,9 +297,13 @@ class Classification():
                 multiple_births[dt] = names
 
         return multiple_births
-
+    
     def us31_singles_table(self):
         """User Story 31: Function prints living_singles() table"""
+        # JRR: huh?  you're just doing a table with id and name, right?
+        # pt_lables = ['USER STORY', 'ID', 'NAME', 'STATUS']
+        #self.user_story = 'US31'
+        #self.status = 'Single'
         pt = PrettyTable()
         pt.field_names = ["ID", "Name"]
         for id, name in self.us31_living_singles():
@@ -310,10 +313,13 @@ class Classification():
 
     def us32_multiple_births_table(self):
         """User Story: 32: Function prints multiple_births() table"""
+        #pt_lables = ['USER STORY', 'BIRTHDAY', 'NAME']
+        #self.user_story = 'US32'
         pt = PrettyTable()
         pt.field_names = ['Birthdate', 'People']
         for dt, people in self.us32_multiple_births().items():
-            pt.add_row([dt, people])  
+            pt.add_row([dt, people])
+        
         print("\n\nUS32: People sharing birthdays")
         print(pt)
 
@@ -331,14 +337,14 @@ class Classification():
         pt.field_names=Family.pt_lables
         for family in self.families.values():
             pt.add_row(family.pt_row(self.people))
-
         print(pt)
-
+        
 
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    file_name = '/Users/katya/Documents/Fall19/555/revised_gedcom/us31_us32.ged'
+    #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
+    file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
   
     classify = Classification(file_name)
     
@@ -346,9 +352,12 @@ def main():
     classify.family_table() # print the families table
 
     # call each of the user stories
-    
+    print(classify.us04_marriage_before_divorse())
+    classify.us27_ages_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
+    #classify.multiple_births()
+    #classify.multiple_births_table()
     
 if __name__ == '__main__':
     main()
