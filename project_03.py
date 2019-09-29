@@ -254,25 +254,33 @@ class Classification():
         today =date.today()
         today = today.strftime('%d %b %Y') #give current day in string format
         today = self.date_format(today) # calling date_format to format date of today as others dates
-        
+        false_result = list() #list save all the incorrect dates to use for testcase
 
         for person in self.people.values():
 
             if person.birthday == 'NA':
                 continue
+
             else:
 
                 if self.date_format(person.birthday) > today: #check if the birthday of person occurs in the futrue
-                    print("ERROR: INDIVIDUAL: US01:  ID: {} : Birthday {} Occurs in the future".format(person.i_d, person.birthday))
+                    print ("ERROR: INDIVIDUAL: US01:  ID: {} : Birthday {} Occurs in the future".format(person.i_d, person.birthday))
+                    false_result.append('INDI BIRTH ERROR')
+                
                 else:
                     continue
 
+        for person in self.people.values():
+
             if person.death == 'NA':
                 continue
-            else:
 
+            else:
+                
                 if self.date_format(person.death) > today: #check if the death of person occurs in the futrue
-                    print("ERROR: INDIVIDUAL: US01:  LINE NUMBER: {} : Death {} Occurs in the future".format(person.i_d, person.death)) 
+                    print ("ERROR: INDIVIDUAL: US01:  LINE NUMBER: {} : Death {} Occurs in the future".format(person.i_d, person.death))
+                    false_result.append('INDI DEAT ERROR')
+ 
                 else:
                     continue
         
@@ -283,7 +291,9 @@ class Classification():
             else:
                 
                 if self.date_format(family.married) > today: #check if the marriage of person occurs in the futrue
-                    print("ERROR: FAMILY: US01:  LINE NUMBER: {} : Marriage date {} Occurs in the future".format(family.i_d, family.married))                
+                    print ("ERROR: FAMILY: US01:  LINE NUMBER: {} : Marriage date {} Occurs in the future".format(family.i_d, family.married))
+                    false_result.append('FAM MARR ERROR')
+
                 else:
                     continue
 
@@ -292,9 +302,15 @@ class Classification():
             else:
 
                 if self.date_format(family.divorced) > today: #check if the divorced date occurs in the futrue
-                    print("ERROR: FAMILY: US01: LINE NUMBER: {} : Divorce date {} Occurs in the future".format(family.i_d, family.divorced))                   
+                    print ("ERROR: FAMILY: US01: LINE NUMBER: {} : Divorce date {} Occurs in the future".format(family.i_d, family.divorced))
+                    false_result.append('FAM DIVO ERROR')  
+
                 else:
                     continue
+
+        return false_result
+
+                
 
     def us03_birth_before_death(self):
         "US03 Birth should occur before death of an individual"
@@ -310,7 +326,7 @@ class Classification():
 
                 if death < birth:
 
-                    print("ERROR: INDIVIDUAL: US03: LINE NUMBER: {} : Died {} before born {}".format(person.i_d, person.death, person.birthday)) 
+                    return ("ERROR: INDIVIDUAL: US03: LINE NUMBER: {} : Died {} before born {}".format(person.i_d, person.death, person.birthday)) 
                 else:
                     continue
 
@@ -348,7 +364,6 @@ class Classification():
 
     def us31_living_singles(self):
         """User Story 31: List all living singles over 30 who have never been married in a GEDCOM file"""
-        # JRR: self.singles = defaultdict()
         singles = list()
         for person in self.people.values():
             if person.alive and person.age != 'NA' and person.age != '' and int(person.age) > 30 and person.spouse == 'NA':
@@ -357,13 +372,15 @@ class Classification():
     
     def us32_multiple_births(self):
         """User Story 32: List all multiple births on the same date in a GEDCOM file"""
-        #self.birthdays = defaultdict()
         birthdays = defaultdict(list)  # birthdays[date] = list of people with that birthday
-
+        
         # add each person
         for person in self.people.values():
-            #self.birthdays.setdefault(person.birthday, []).append(person.name)
-            birthdays[person.birthday].append(person.name)   # what if the birthday is not known?
+            if person.birthday == 'NA' or person.birthday == '':
+                continue
+            else:
+                birthdays[person.birthday].append(person.name)
+                
 
         multiple_births = dict()  # multiple_births[date] = list of people with that birthday
         for dt, names in birthdays.items():
@@ -374,10 +391,6 @@ class Classification():
     
     def us31_singles_table(self):
         """User Story 31: Function prints living_singles() table"""
-        # JRR: huh?  you're just doing a table with id and name, right?
-        # pt_lables = ['USER STORY', 'ID', 'NAME', 'STATUS']
-        #self.user_story = 'US31'
-        #self.status = 'Single'
         pt = PrettyTable()
         pt.field_names = ["ID", "Name"]
         for id, name in self.us31_living_singles():
@@ -387,8 +400,6 @@ class Classification():
 
     def us32_multiple_births_table(self):
         """User Story: 32: Function prints multiple_births() table"""
-        #pt_lables = ['USER STORY', 'BIRTHDAY', 'NAME']
-        #self.user_story = 'US32'
         pt = PrettyTable()
         pt.field_names = ['Birthdate', 'People']
         for dt, people in self.us32_multiple_births().items():
@@ -423,7 +434,6 @@ def main():
 
 
 
-
     classify = Classification(file_name)
     
     classify.person_table() # print the person table
@@ -433,11 +443,11 @@ def main():
     d1= datetime.strptime(day, '%d %b %Y')
 
 
-
     # call each of the user stories
 
     classify.us01_before_current_dates(d1)
-    classify.us03_birth_before_death()
+    print(classify.us03_birth_before_death())
+
     #print(classify.us04_marriage_before_divorse())
     classify.us27_ages_table()
     classify.us31_singles_table()
