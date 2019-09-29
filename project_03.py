@@ -239,7 +239,94 @@ class Classification():
                                     wife_id, children)   #create an instance of class family
                 children = []
         self.entity.clear()
+
+    def date_format(self, old_date):
+        #function helps to format the date once used by us01 & us03
+
+        new_date = datetime.strptime(old_date, '%d %b %Y').date()     
+
+        return new_date
     
+    def us01_before_current_dates(self,today):
+        """ US01 Dates (birth, marriage, divorce, death) should not be after the current date"""
+
+        today =date.today()
+        today = today.strftime('%d %b %Y') #give current day in string format
+        today = self.date_format(today) # calling date_format to format date of today as others dates
+        false_result = list() #list save all the incorrect dates to use for testcase
+
+        for person in self.people.values():
+
+            if person.birthday == 'NA':
+                continue
+
+            else:
+
+                if self.date_format(person.birthday) > today: #check if the birthday of person occurs in the futrue
+                    print ("ERROR: INDIVIDUAL: US01:  ID: {} : Birthday {} Occurs in the future".format(person.i_d, person.birthday))
+                    false_result.append('INDI BIRTH ERROR')
+                
+                else:
+                    continue
+
+        for person in self.people.values():
+
+            if person.death == 'NA':
+                continue
+
+            else:
+                
+                if self.date_format(person.death) > today: #check if the death of person occurs in the futrue
+                    print ("ERROR: INDIVIDUAL: US01:  LINE NUMBER: {} : Death {} Occurs in the future".format(person.i_d, person.death))
+                    false_result.append('INDI DEAT ERROR')
+ 
+                else:
+                    continue
+        
+        for family in self.families.values():
+
+            if family.married == 'NA':
+                continue
+            else:
+                
+                if self.date_format(family.married) > today: #check if the marriage of person occurs in the futrue
+                    print ("ERROR: FAMILY: US01:  LINE NUMBER: {} : Marriage date {} Occurs in the future".format(family.i_d, family.married))
+                    false_result.append('FAM MARR ERROR')
+
+                else:
+                    continue
+
+            if family.divorced == 'NA':
+                continue
+            else:
+
+                if self.date_format(family.divorced) > today: #check if the divorced date occurs in the futrue
+                    print ("ERROR: FAMILY: US01: LINE NUMBER: {} : Divorce date {} Occurs in the future".format(family.i_d, family.divorced))
+                    false_result.append('FAM DIVO ERROR')  
+
+                else:
+                    continue
+
+        return false_result          
+
+    def us03_birth_before_death(self):
+        "US03 Birth should occur before death of an individual"
+
+        for person in self.people.values():
+
+            if person.birthday == 'NA' or person.death == 'NA':
+                continue
+            else:
+
+                birth = self.date_format(person.birthday)
+                death = self.date_format(person.death)
+
+                if death < birth:
+
+                    return ("ERROR: INDIVIDUAL: US03: LINE NUMBER: {} : Died {} before born {}".format(person.i_d, person.death, person.birthday)) 
+                else:
+                    continue
+
     def us04_marriage_before_divorse(self):
         """User story 04: Function that checks if marriage occurs before divorce of spouses, and if divorce occurs after marriage"""
         for family in self.families.values():
@@ -332,20 +419,25 @@ class Classification():
         for family in self.families.values():
             pt.add_row(family.pt_row(self.people))
         print(pt)
-        
 
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    #file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\us31_us32.ged'
-    file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
-  
+    #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
+    #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
+    file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
+
     classify = Classification(file_name)
     
     classify.person_table() # print the person table
     classify.family_table() # print the families table
 
+    day = '24 Sep 2019'
+    d1= datetime.strptime(day, '%d %b %Y')
+
     # call each of the user stories
+    classify.us01_before_current_dates(d1)
+    print(classify.us03_birth_before_death())
     print(classify.us04_marriage_before_divorse())
     classify.us27_ages_table()
     classify.us31_singles_table()
@@ -353,3 +445,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+
