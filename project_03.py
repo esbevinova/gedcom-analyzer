@@ -142,7 +142,6 @@ class Classification():
         self.entity = dict()
         self.get_entities(valid_lines)
 
-
     def get_entities(self, valid_lines):
         """Function parses through a list of data from a GEDCOM file
         and devides it into separate entities.
@@ -241,7 +240,6 @@ class Classification():
                 children = []
         self.entity.clear()
     
-
     def us04_marriage_before_divorse(self):
         for family in self.families.values():
             if family.married == 'NA' or family.divorced == 'NA':
@@ -271,10 +269,8 @@ class Classification():
         print('us27: Ages of individuals')
         print(pt)
 
-
     def us31_living_singles(self):
         """User Story 31: List all living singles over 30 who have never been married in a GEDCOM file"""
-        # JRR: self.singles = defaultdict()
         singles = list()
         for person in self.people.values():
             if person.alive and person.age != 'NA' and person.age != '' and int(person.age) > 30 and person.spouse == 'NA':
@@ -283,13 +279,14 @@ class Classification():
     
     def us32_multiple_births(self):
         """User Story 32: List all multiple births on the same date in a GEDCOM file"""
-        #self.birthdays = defaultdict()
         birthdays = defaultdict(list)  # birthdays[date] = list of people with that birthday
 
         # add each person
         for person in self.people.values():
-            #self.birthdays.setdefault(person.birthday, []).append(person.name)
-            birthdays[person.birthday].append(person.name)   # what if the birthday is not known?
+            if person.birthday == 'NA' or person.birthday == '':
+                continue
+            else:
+                birthdays[person.birthday].append(person.name)
 
         multiple_births = dict()  # multiple_births[date] = list of people with that birthday
         for dt, names in birthdays.items():
@@ -300,10 +297,6 @@ class Classification():
     
     def us31_singles_table(self):
         """User Story 31: Function prints living_singles() table"""
-        # JRR: huh?  you're just doing a table with id and name, right?
-        # pt_lables = ['USER STORY', 'ID', 'NAME', 'STATUS']
-        #self.user_story = 'US31'
-        #self.status = 'Single'
         pt = PrettyTable()
         pt.field_names = ["ID", "Name"]
         for id, name in self.us31_living_singles():
@@ -313,8 +306,6 @@ class Classification():
 
     def us32_multiple_births_table(self):
         """User Story: 32: Function prints multiple_births() table"""
-        #pt_lables = ['USER STORY', 'BIRTHDAY', 'NAME']
-        #self.user_story = 'US32'
         pt = PrettyTable()
         pt.field_names = ['Birthdate', 'People']
         for dt, people in self.us32_multiple_births().items():
@@ -343,7 +334,7 @@ class Classification():
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
+    #file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\us31_us32.ged'
     file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
   
     classify = Classification(file_name)
@@ -356,8 +347,6 @@ def main():
     classify.us27_ages_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
-    #classify.multiple_births()
-    #classify.multiple_births_table()
     
 if __name__ == '__main__':
     main()
