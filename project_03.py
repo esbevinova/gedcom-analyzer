@@ -444,7 +444,6 @@ def main():
 
 
     # call each of the user stories
-
     classify.us01_before_current_dates(d1)
     print(classify.us03_birth_before_death())
 
