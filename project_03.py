@@ -426,14 +426,13 @@ def main():
     #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
-
+    
+    day = '24 Sep 2019'
+    d1= datetime.strptime(day, '%d %b %Y')
     classify = Classification(file_name)
     
     classify.person_table() # print the person table
     classify.family_table() # print the families table
-
-    day = '24 Sep 2019'
-    d1= datetime.strptime(day, '%d %b %Y')
 
     # call each of the user stories
     classify.us01_before_current_dates(d1)
