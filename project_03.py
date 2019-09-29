@@ -430,7 +430,7 @@ def main():
 
     #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
-    file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us04.ged'
+    file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
 
 
 
