@@ -3,7 +3,7 @@ from datetime import datetime
 from datetime import date
 from project_03 import Person, Family, Classification
 
-classify = Classification('/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us04.ged')
+classify = Classification('/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged')
 
 class StoriesTest(unittest.TestCase):
 
