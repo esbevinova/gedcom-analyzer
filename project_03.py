@@ -241,6 +241,7 @@ class Classification():
         self.entity.clear()
     
     def us04_marriage_before_divorse(self):
+        """User story 04: Function that checks if marriage occurs before divorce of spouses, and if divorce occurs after marriage"""
         for family in self.families.values():
             if family.married == 'NA' or family.divorced == 'NA':
                 continue
@@ -255,6 +256,7 @@ class Classification():
                     continue
 
     def us27_individual_ages(self):
+        """User story 27: Function that gets the age of a person"""
         for person in self.people.values():
             if person.age == 'NA':
                 continue
@@ -262,6 +264,7 @@ class Classification():
                 yield person.i_d, person.age
 
     def us27_ages_table(self):
+        """User story 27: Function that prints us27_individual_ages() table"""
         pt = PrettyTable()
         pt.field_names = ["ID", "AGE"]
         for i_d, age in self.us27_individual_ages():
