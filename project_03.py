@@ -142,7 +142,6 @@ class Classification():
         self.entity = dict()
         self.get_entities(valid_lines)
 
-
     def get_entities(self, valid_lines):
         """Function parses through a list of data from a GEDCOM file
         and devides it into separate entities.
@@ -240,7 +239,7 @@ class Classification():
                                     wife_id, children)   #create an instance of class family
                 children = []
         self.entity.clear()
-    
+
     def date_format(self, old_date):
         #function helps to format the date once used by us01 & us03
 
@@ -308,9 +307,7 @@ class Classification():
                 else:
                     continue
 
-        return false_result
-
-                
+        return false_result          
 
     def us03_birth_before_death(self):
         "US03 Birth should occur before death of an individual"
@@ -330,9 +327,8 @@ class Classification():
                 else:
                     continue
 
-    
-
     def us04_marriage_before_divorse(self):
+        """User story 04: Function that checks if marriage occurs before divorce of spouses, and if divorce occurs after marriage"""
         for family in self.families.values():
             if family.married == 'NA' or family.divorced == 'NA':
                 continue
@@ -347,6 +343,7 @@ class Classification():
                     continue
 
     def us27_individual_ages(self):
+        """User story 27: Function that gets the age of a person"""
         for person in self.people.values():
             if person.age == 'NA':
                 continue
@@ -354,13 +351,13 @@ class Classification():
                 yield person.i_d, person.age
 
     def us27_ages_table(self):
+        """User story 27: Function that prints us27_individual_ages() table"""
         pt = PrettyTable()
         pt.field_names = ["ID", "AGE"]
         for i_d, age in self.us27_individual_ages():
             pt.add_row([i_d, age])
         print('us27: Ages of individuals')
         print(pt)
-
 
     def us31_living_singles(self):
         """User Story 31: List all living singles over 30 who have never been married in a GEDCOM file"""
@@ -373,14 +370,13 @@ class Classification():
     def us32_multiple_births(self):
         """User Story 32: List all multiple births on the same date in a GEDCOM file"""
         birthdays = defaultdict(list)  # birthdays[date] = list of people with that birthday
-        
+
         # add each person
         for person in self.people.values():
             if person.birthday == 'NA' or person.birthday == '':
                 continue
             else:
                 birthdays[person.birthday].append(person.name)
-                
 
         multiple_births = dict()  # multiple_births[date] = list of people with that birthday
         for dt, names in birthdays.items():
@@ -423,7 +419,6 @@ class Classification():
         for family in self.families.values():
             pt.add_row(family.pt_row(self.people))
         print(pt)
-        
 
 def main():
     """Main function calls valid_tag function and prints the results"""
@@ -431,8 +426,6 @@ def main():
     #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
-
-
 
     classify = Classification(file_name)
     
@@ -442,17 +435,14 @@ def main():
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
 
-
     # call each of the user stories
     classify.us01_before_current_dates(d1)
     print(classify.us03_birth_before_death())
-
-    #print(classify.us04_marriage_before_divorse())
+    print(classify.us04_marriage_before_divorse())
     classify.us27_ages_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
-    #classify.multiple_births()
-    #classify.multiple_births_table()
     
 if __name__ == '__main__':
     main()
+
