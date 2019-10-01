@@ -363,7 +363,7 @@ class Classification():
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
         for person in self.people.values():
-            if person.age == 'NA':
+            if person.age == 'NA' or person.age < 0:
                 continue
             else:
                 yield person.i_d, person.age
@@ -483,7 +483,7 @@ def main():
     #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
-    file_name = 'us04_us27.ged'
+    file_name = '/Users/nadik/Desktop/gedcom-analyzer/us01_us03.ged'
     
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
