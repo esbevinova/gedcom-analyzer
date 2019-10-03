@@ -1,0 +1,25 @@
+test_us01 (__main__.StoryTest)
+US01 test Dates (birth, marriage, divorce, death) should not be after the current date ... ERROR: INDIVIDUAL: US01:  ID: @I1@ : Birthday 5 NOV 2020 Occurs in the future
+ERROR: INDIVIDUAL: US01:  LINE NUMBER: @I3@ : Death 30 NOV 2020 Occurs in the future
+ERROR: FAMILY: US01:  LINE NUMBER: @F2@ : Marriage date 24 APR 2020 Occurs in the future
+ERROR: FAMILY: US01: LINE NUMBER: @F2@ : Divorce date 23 MAR 2021 Occurs in the future
+ok
+test_us03 (__main__.StoryTest)
+US03 test Birth should occur before death of an individual ... ok
+test_us04 (__main__.StoryTest)
+Function that tests us04_marriage_before_divorse() ... ok
+test_us27 (__main__.StoryTest)
+Function that tests us27_individual_ages() ... ok
+test_us31 (__main__.StoryTest)
+Function that tests us31_living_singles() ... ok
+test_us32 (__main__.StoryTest)
+Function that tests us31_multiple_births() ... ok
+test_us35 (__main__.StoryTest)
+Function that tests us35_recent_births() ... ok
+test_valid_date (__main__.StoryTest)
+Function that tests valid_date() ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.021s
+
+OK
