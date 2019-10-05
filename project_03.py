@@ -19,7 +19,7 @@ def valid_tag(file_name):
     else:
         with file:
 
-            for line in file:
+            for line_number, line in enumerate(file):
                 line = line.rstrip('\n')    #Strip lines
                 line = line.split()     #Split lines into tokent
                 level = line[0]     #Assign first token to level
@@ -35,13 +35,13 @@ def valid_tag(file_name):
                 if len(line) == 3 and line[0] == '0' and line[2] in exceptns: #Identify exceptions INDI and FAM
                     tag = line[2]       #For exceptions, switch places for tag and argument
                     argument = line[1]
-                    good_line = [str(level), str(tag), str(argument)]
+                    good_line = [str(level), str(tag), str(argument), line_number + 1]
                     answer = tuple(good_line)
 
                 else:   #Check if level and corresponding tag are valid
                     if level in valid:
                         if tag in valid[level]:
-                            good_line = [str(level), str(tag), str(' '.join(argument))]
+                            good_line = [str(level), str(tag), str(' '.join(argument)), line_number + 1]
                             answer = tuple(good_line)
                         else:   
                             continue
@@ -69,16 +69,23 @@ class Person():
     pt_lables = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 
                 'ALIVE', 'DEATH', 'CHILD', 'SPOUSE']
 
-    def __init__(self, i_d, name, gender, birthday, death, child, spouse):
+    def __init__(self, i_d, name, name_line, gender, gender_line, birthday, birthday_line, death, death_line, 
+                child, child_line, spouse, spouse_line):
         """Function init"""
         
         self.i_d = i_d
         self.name = name
+        self.name_line = str(name_line)
         self.gender = gender
+        self.gender_line = str(gender_line)
         self.birthday = birthday
+        self.birthday_line = str(birthday_line)
         self.death = death
+        self.death_line = str(death_line)
         self.child = child
+        self.child_line = str(child_line)
         self.spouse = spouse
+        self.spouse_line = str(spouse_line)
         
         self.today = date.today()
         self.age = 'NA'
@@ -126,17 +133,23 @@ class Family():
     pt_lables = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 
                 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
 
-    def __init__(self, i_d, married, divorced, husb_id, wife_id, children):
+    def __init__(self, i_d, married, married_line, divorced, divorced_line, husb_id, husb_id_line, 
+                                    wife_id, wife_id_line, children, children_lines):
         """Function init"""
 
         self.i_d = i_d
         self.married = married 
+        self.married_line = str(married_line)
         self.divorced = divorced
+        self.divorced_line = str(divorced_line)
         self.husb_id = husb_id
+        self.husb_id_line = str(husb_id_line)
         self.husb_name = 'NA'
         self.wife_id = wife_id
+        self.wife_id_line = str(wife_id_line)
         self.wife_name = 'NA'
         self.children = children
+        self.children_lines = str(children_lines)
 
     def pt_row(self, people):
         """Function creates a row for family table"""
@@ -197,17 +210,29 @@ class Classification():
         for 'FAM' data an instance of class family is created"""
         
         name = 'NA'
+        name_line = 0
         gender = 'NA'
+        gender_line = 0
         birthday = 'NA'
+        birthday_line = 0
         death = 'NA'
+        death_line = 0
         child = 'NA'
+        child_line = 0
         spouse = 'NA'
+        spouse_line = 0
 
         married = 'NA'
+        married_line = 0
         divorced = 'NA'
+        divorced_line = 0
         husb_id = 'NA'
+        husb_id_line = 0
         wife_id = 'NA'
+        wife_id_line = 0
+
         children = []
+        children_lines = []
          
         for key, value in self.entity.items():  #Person entity
             if key[1] == 'INDI':    
@@ -215,13 +240,16 @@ class Classification():
                     for i in value:
                         if i[0] == '1' and i[1] == 'NAME':  #get person name
                             name = i[2]
+                            name_line = i[3]
                         elif i[0] == '1' and i[1] == 'SEX': #get person gender
                             gender = i[2]
+                            gender_line = i[3]
                         elif i[0] == '1' and i[1] == 'BIRT':    #get person birthday
                             b = value.index(i)
                             birth = value[b + 1]
                             if birth[0] == '2' and birth[1] == 'DATE' and (valid_date(birth[2])==True):  #check if birthday date is available 
                                 birthday = birth[2] 
+                                birthday_line = birth[3]
                             else:
                                 continue
                         elif i[0] == '1' and i[1] == 'DEAT':    #get person death
@@ -229,17 +257,21 @@ class Classification():
                             dth = value[d + 1]
                             if dth[0] == '2' and dth[1] == 'DATE' and (valid_date(dth[2])==True):  #check if death date is available
                                 death = dth[2]
+                                death_line = dth[3]
+
                             else:
                                 continue 
                         elif i[0] == '1' and i[1] == 'FAMC': #get id of the family the person was born into
                             child = i[2]
+                            child_line = i[3]
                         elif i[0] == '1' and i[1] == 'FAMS': #get id of the family the person is a spouse in
                             spouse = i[2]
+                            spouse_line = i[3]
                         elif i[0] == '2' and i[1] == 'DATE':
                             continue
 
-                self.people[key[2]] = Person(key[2], name, gender, birthday, death, 
-                                child, spouse)  #create an instance of class person
+                self.people[key[2]] = Person(key[2], name, name_line, gender, gender_line, birthday, birthday_line,
+                                 death, death_line, child, child_line, spouse, spouse_line)  #create an instance of class person
 
             #Family entity
             elif key[1] == 'FAM':
@@ -250,25 +282,31 @@ class Classification():
                             mar = value[m + 1]
                             if mar[0] == '2' and mar[1] == 'DATE' and (valid_date(mar[2])==True):  #check if marriage is available
                                 married = mar[2]
+                                married_line = mar[3]
                             else:
                                 continue 
                         elif i[0] == '1' and i[1] == 'HUSB':    #get husband id
                             husb_id = i[2]
+                            husb_id_line = i[3]
                         elif i[0] == '1' and i[1] == 'WIFE':    #get wife id
                             wife_id = i[2]
+                            wife_id_line = i[3]
                         elif i[0] == '1' and i[1] == 'CHIL':    #get children id
                             children.append(i[2])
+                            children_lines.append(i[3])
                         elif i[0] == '1' and i[1] == 'DIV':    #get divorce date
                             d = value.index(i)
                             dv = value[d + 1]
                             if dv[0] == '2' and dv[1] == 'DATE' and (valid_date(dv[2])== True):  #check if divorce is available
                                 divorced = dv[2]
+                                divorced_line = dv[3]
                             else:
                                 divorced = 'NA'
                     
-                self.families[key[2]] = Family(key[2], married, divorced, husb_id, 
-                                    wife_id, children)   #create an instance of class family
+                self.families[key[2]] = Family(key[2], married, married_line, divorced, divorced_line, husb_id, husb_id_line, 
+                                    wife_id, wife_id_line, children, children_lines)   #create an instance of class family
                 children = []
+                children_lines = []
         self.entity.clear()
 
     def date_format(self, old_date):
@@ -325,7 +363,14 @@ class Classification():
                 else:
                     continue
 
-        return false_result          
+        return false_result   
+
+    def getting_children_lines(self):
+        """For future references"""
+        for family in self.families.values():
+            print(family.i_d)
+            for ch, chl in zip(family.children, family.children_lines):
+                print(ch, chl)       
 
 
 
@@ -350,15 +395,29 @@ class Classification():
                 continue
             else:
                 if valid_date(family.married)==True:
-                    married = datetime.strptime(family.married, '%d %b %Y') 
+                    married = self.date_format(family.married) 
                     if valid_date(family.divorced)==True:
-                        divorced = datetime.strptime(family.divorced, '%d %b %Y') 
+                        divorced = self.date_format(family.divorced) 
                         time_married = divorced.year - married.year - ((divorced.month, divorced.day) < (married.month, married.day))       
                         if time_married < 0:
-                            return "ERROR: FAMILY: US04: (line# goes here) " + family.i_d + ": Divorced " + family.divorced + \
-                            " before married on " + family.married
+                            yield "ERROR: FAMILY: US04: {}: Divorced on {} (line {}) before married on {} (line {})".format(family.i_d, family.divorced, family.divorced_line, family.married, family.married_line)
                         else:
                             continue
+
+    def us07_over150(self):
+        """User story 07 checks for persons age and returns an error if a person is over 150 years old, 
+        or was over 150 years old at time of death"""
+        for person in self.people.values():
+            if person.age == 'NA':
+                continue
+            else:
+                if person.alive and person.age > 150:
+                    yield "ERROR: INDIVIDUAL: US07: {} More than 150 years old - Birthday {} (line {})".format(person.i_d, person.birthday, person.birthday_line)
+                elif person.alive==False and person.age > 150:
+                    yield "ERROR: INDIVIDUAL: US07: {} More than 150 years old at death: Birthday {} (line {}), Death date {} (line {})".format(person.i_d, 
+                    person.birthday, person.birthday_line, person.death, person.death_line)
+                else:
+                    continue
 
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
@@ -460,7 +519,7 @@ class Classification():
         
         print("\n\nUS35: People who were born in the last 30 days")
         print(pt)
-    
+                
     def person_table(self):
         """Function prints people table """
         pt = PrettyTable()
@@ -483,7 +542,7 @@ def main():
     #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
-    file_name = '/Users/nadik/Desktop/gedcom-analyzer/us01_us03.ged'
+    file_name = '/Users/nadik/Desktop/gedcom-analyzer/test_results.ged'
     
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
@@ -495,11 +554,16 @@ def main():
     # call each of the user stories
     classify.us01_before_current_dates(d1)
     print(classify.us03_birth_before_death())
-    print(classify.us04_marriage_before_divorse())
+    for err in classify.us04_marriage_before_divorse():
+        print(err)
+    for err in classify.us07_over150():
+        print(err)
     classify.us27_ages_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
+    
+    
 
     
 if __name__ == '__main__':
