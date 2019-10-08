@@ -69,7 +69,7 @@ class Person():
     pt_lables = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 
                 'ALIVE', 'DEATH', 'CHILD', 'SPOUSE']
 
-    def __init__(self, i_d, name, name_line, gender, gender_line, birthday, birthday_line, death, death_line, 
+    def __init__(self, i_d, name, name_line, gender, gender_line, birthday, birthday_line, death, death_line, alive, 
                 child, child_line, spouse, spouse_line):
         """Function init"""
         
@@ -82,6 +82,7 @@ class Person():
         self.birthday_line = str(birthday_line)
         self.death = death
         self.death_line = str(death_line)
+        self.alive = alive
         self.child = child
         self.child_line = str(child_line)
         self.spouse = spouse
@@ -89,7 +90,6 @@ class Person():
         
         self.today = date.today()
         self.age = 'NA'
-        self.alive = bool
 
         self.get_age(self.birthday, self.death, self.today)     
 
@@ -110,12 +110,7 @@ class Person():
         
     def pt_row(self):
         """Function creates a row for person table"""
-
-        if self.death == 'NA':
-            self.alive = True
-        else:   #Check if date of death is available, else assign 'NA'
-            self.death = self.death
-            self.alive = False  #Get True/False for alive value
+        
         if valid_date(self.birthday)!=True:
             self.birthday = None
         else:
@@ -217,6 +212,7 @@ class Classification():
         birthday_line = 0
         death = 'NA'
         death_line = 0
+        alive = bool
         child = 'NA'
         child_line = 0
         spouse = 'NA'
@@ -258,6 +254,7 @@ class Classification():
                             if dth[0] == '2' and dth[1] == 'DATE' and (valid_date(dth[2])==True):  #check if death date is available
                                 death = dth[2]
                                 death_line = dth[3]
+                                alive=False
 
                             else:
                                 continue 
@@ -271,7 +268,7 @@ class Classification():
                             continue
 
                 self.people[key[2]] = Person(key[2], name, name_line, gender, gender_line, birthday, birthday_line,
-                                 death, death_line, child, child_line, spouse, spouse_line)  #create an instance of class person
+                                 death, death_line, alive, child, child_line, spouse, spouse_line)  #create an instance of class person
 
             #Family entity
             elif key[1] == 'FAM':
@@ -412,7 +409,7 @@ class Classification():
                 continue
             else:
                 if person.alive and person.age > 150:
-                    yield "ERROR: INDIVIDUAL: US07: {} More than 150 years old - Birthday {} (line {})".format(person.i_d, person.birthday, person.birthday_line)
+                    yield "ERROR: INDIVIDUAL: US07: {} More than 150 years old: Birthday {} (line {})".format(person.i_d, person.birthday, person.birthday_line)
                 elif person.alive==False and person.age > 150:
                     yield "ERROR: INDIVIDUAL: US07: {} More than 150 years old at death: Birthday {} (line {}), Death date {} (line {})".format(person.i_d, 
                     person.birthday, person.birthday_line, person.death, person.death_line)

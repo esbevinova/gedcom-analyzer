@@ -3,7 +3,7 @@ from datetime import datetime
 from project_03 import Person, Family, Classification
 from project_03 import valid_date
 
-classify = Classification('/Users/nadik/Desktop/gedcom-analyzer/us01_us03.ged')
+classify = Classification('/Users/nadik/Desktop/gedcom-analyzer/test_results.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -16,7 +16,7 @@ class StoryTest(unittest.TestCase):
         expect = ['INDI BIRTH ERROR', 'INDI DEAT ERROR', 'FAM MARR ERROR', 'FAM DIVO ERROR']   
 
         self.assertEqual(us01, expect)
-  
+       
     def test_us03(self):
         'US03 test Birth should occur before death of an individual'
         
@@ -27,9 +27,18 @@ class StoryTest(unittest.TestCase):
 
     def test_us04(self):
         """Function that tests us04_marriage_before_divorse()"""
-        marriage_divorse = classify.us04_marriage_before_divorse()
-        expect = 'ERROR: FAMILY: US04: (line# goes here) @F4@: Divorced 13 DEC 2005 before married on 14 JUL 2006'
+        marriage_divorse = list(classify.us04_marriage_before_divorse())
+        expect = ['ERROR: FAMILY: US04: @F4@: Divorced on 13 DEC 2005 (line 329) before married on 14 JUL 2006 (line 327)']
+        print(marriage_divorse)
         self.assertEqual(marriage_divorse, expect)
+
+    def test_us07(self):
+        """Function tests us07_over150()"""
+        us07 = list(classify.us07_over150())
+        print(us07)
+        expect = ['ERROR: INDIVIDUAL: US07: @31@ More than 150 years old: Birthday 16 DEC 1770 (line 281)', 
+                'ERROR: INDIVIDUAL: US07: @32@ More than 150 years old at death: Birthday 31 MAR 1685 (line 286), Death date 31 MAR 1887 (line 288)']          
+        self.assertEqual(us07, expect)
 
     def test_us27(self):
         """Function that tests us27_individual_ages()"""
@@ -38,14 +47,14 @@ class StoryTest(unittest.TestCase):
                     ('@I10@', 39), ('@I11@', 2), ('@I12@', 36), ('@I13@', 7), ('@I14@', 9), ('@I15@', 4),
                     ('@I16@', 42), ('@I17@', 6), ('@I18@', 3), ('@I19@', 4), ('@I20@', 28), ('@I21@', 1),
                     ('@I23@', 1), ('@I24@', 39), ('@I25@', 34), ('@I26@', 0), ('@I27@', 39), ('@28@', 68), 
-                    ('@29@', 68), ('@30@', 39),]
+                    ('@29@', 68), ('@30@', 39), ('@31@', 248), ('@32@', 202)]
         self.assertEqual (individual_ages, expect)
 
     def test_us31(self):
         """Function that tests us31_living_singles()"""
         #classify = Classification('/Users/katya/Documents/Fall19/555/revised_gedcom/us31_us32.ged')
         living_singles_list = classify.us31_living_singles()
-        expect =  [('@28@', 'Smith /Joseph'), ('@29@', 'Sasquatch /Kyle'), ('@30@', 'Birch /Cynthia')]
+        expect =  [('@28@', 'Smith /Joseph'), ('@29@', 'Sasquatch /Kyle'), ('@30@', 'Birch /Cynthia'), ('@31@', 'Ludwig /Beethoven')]
         self.assertEqual (living_singles_list, expect)
     
     def test_us32(self):
@@ -66,6 +75,8 @@ class StoryTest(unittest.TestCase):
         """Function that tests valid_date()"""
         self.assertEqual (valid_date('10 SEP 2019'), True)
         self.assertEqual (valid_date('31 FRB 2019'), None)
+
+
 
 if __name__ == "__main__":
     unittest.main(exit=False, verbosity=2)
