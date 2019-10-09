@@ -49,6 +49,15 @@ class StoryTest(unittest.TestCase):
         expect = ['ERROR: INDIVIDUAL: US07: @31@ More than 150 years old: Birthday 16 DEC 1770 (line 281)', 
                 'ERROR: INDIVIDUAL: US07: @32@ More than 150 years old at death: Birthday 31 MAR 1685 (line 286), Death date 31 MAR 1887 (line 288)']          
         self.assertEqual(us07, expect)
+    
+    def test_us10(self):
+        """Function that tests us10_marriage_after14() US10: parents must be at least 14 years old at the time of marriage""" 
+        us10 = list(classify.us10_marriage_after14())
+        expect = ["ERROR: FAMILY: US10: ID: @F1@: wife's age is less than 14 years old at the time of marriage 8 JUL 1978 (line 297)",
+                  "ERROR: FAMILY: US10: ID: @F2@: wife's age is less than 14 years old at the time of marriage 24 APR 2020 (line 307)",
+                  "ERROR: FAMILY: US10: ID: @F3@: husband's age is less than 14 years old at the time of marriage 11 AUG 2016 (line 316)",
+                  "ERROR: FAMILY: US10: ID: @F4@: wife's age is less than 14 years old at the time of marriage 14 JUL 2006 (line 327)"]
+        self.assertEqual(us10, expect)
 
     def test_us27(self):
         """Function that tests us27_individual_ages()"""

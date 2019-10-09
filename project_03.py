@@ -385,8 +385,6 @@ class Classification():
                 else:
                     continue  
 
-
-
     def us03_birth_before_death(self):
         """US03 Birth should occur before death of an individual"""
 
@@ -431,6 +429,32 @@ class Classification():
                     person.birthday, person.birthday_line, person.death, person.death_line)
                 else:
                     continue
+    
+    def us10_marriage_after14(self):
+        """Checks if marriage took place at least 14 years after birth of both spouses (parents must be at least 14 years old)"""
+        for family in self.families.values():
+            if self.people[family.husb_id].birthday == 'NA' or self.people[family.wife_id].birthday == 'NA' or family.married == None:
+                continue
+            else:
+                marriage_date = self.date_format(family.married)      
+                husb_age = self.date_format(self.people[family.husb_id].birthday)              
+                wife_age = self.date_format(self.people[family.wife_id].birthday)
+                husb_age_at_marriage = marriage_date.year - husb_age.year - ((marriage_date.month, marriage_date.day) < (husb_age.month, husb_age.day))
+                wife_age_at_marriage = marriage_date.year - wife_age.year - ((marriage_date.month, marriage_date.day) < (wife_age.month, wife_age.day))
+                if husb_age_at_marriage < 14:
+                    yield "ERROR: FAMILY: US10: ID: {}: husband's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
+                if wife_age_at_marriage < 14:
+                    yield "ERROR: FAMILY: US10: ID: {}: wife's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
+                else:
+                    continue
+                """
+                if Classification.date_within(self, marriage_date, husb_age, 14, "years"):
+                    yield "ERROR: FAMILY: US10: {}: husband's age is less than 14 years when married".format(family.i_d)
+                if Classification.date_within(self, marriage_date, wife_age, 14, "years"):
+                    yield "ERROR: FAMILY: US10: {}: wife's age is less than 14 years when married".format(family.i_d)
+                else:
+                    continue
+                """
 
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
@@ -572,6 +596,8 @@ def main():
     for err in classify.us04_marriage_before_divorse():
         print(err)
     for err in classify.us07_over150():
+        print(err)
+    for err in classify.us10_marriage_after14():
         print(err)
     classify.us27_ages_table()
     classify.us31_singles_table()
