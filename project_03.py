@@ -24,7 +24,7 @@ def valid_tag(file_name):
                 line = line.split()     #Split lines into tokent
                 level = line[0]     #Assign first token to level
                 tag = line[1]       #Assign second token to tag
-                argument = line[2:]   #Assign comment to argument
+                argument = line[2:] #Assign comment to argument
 
                 exceptns = ['INDI', 'FAM']  #Exceptions
                 valid = {'0': ['HEAD', 'TRLR', 'NOTE'],  #Key: level, value: valid tags
@@ -53,7 +53,6 @@ def valid_date (date):
         """ Check whether the date is valid or not 
         returns true if the date is valid
         returns false if the date is not valid"""
-    
         if (date!=None)and(date!="NA"):
             try:
                 date=datetime.strptime(date, "%d %b %Y").date()
@@ -99,6 +98,7 @@ class Person():
             elif valid_date(self.death)==True: #Check for date of death and if such data available calculate age at time of death
                 death = datetime.strptime(self.death, '%d %b %Y')   #Convert death to datetime format
                 self.age = death.year - birthday.year - ((death.month, death.day) < (birthday.month, birthday.day))
+
         return self.age
         
     def pt_row(self):
@@ -108,15 +108,18 @@ class Person():
             self.alive = True
         else:   #Check if date of death is available, else assign 'NA'
             self.death = self.death
-            self.alive = False  #Get True/False for alive value
+            self.alive = False           #Get True/False for alive value
+
         if valid_date(self.birthday)!=True:
             self.birthday = None
         else:
             self.birthday= self.birthday
+
         if valid_date(self.death)!=True:
             self.death = None
         else:
             self.death=self.death
+
         return [self.i_d, self.name, self.gender, self.birthday, self.age, self.alive, self.death, self.child, self.spouse]
 
 
@@ -140,7 +143,7 @@ class Family():
 
     def pt_row(self, people):
         """Function creates a row for family table"""
-        
+
         if valid_date(self.married)!=True:
             self.married = None
         else:
@@ -150,6 +153,7 @@ class Family():
             self.divorced = None
         else:
             self.divorced=self.divorced
+
         return [self.i_d, self.married, self.divorced, self.husb_id, people[self.husb_id].name, self.wife_id, people[self.wife_id].name, self.children]
 
 
@@ -177,7 +181,6 @@ class Classification():
         """Function parses through a list of data from a GEDCOM file
         and devides it into separate entities.
         A new entity starts with an element of data that has level 0"""
-        
         info = []
     
         for i in self.valid_lines:       
@@ -190,7 +193,7 @@ class Classification():
                 info = []
                 self.entity[i] = info
                 continue
-
+                
     def make_entity(self, entity):
         """Function parses through data in self.entity dictionary,
         for 'INDI' data an instance of class person is created,
@@ -270,10 +273,31 @@ class Classification():
                                     wife_id, children)   #create an instance of class family
                 children = []
         self.entity.clear()
+        
+    def us42_valid_date_table(self):
+        """User Story: 42: Function prints valid_date() table"""
+        date = dict()
+        pt = PrettyTable()
+        pt.field_names = ["Valid Dates"]
+        for person in self.people.values():
+            if valid_date(person.birthday)!= None:
+                date[person.birthday]=valid_date(person.birthday)
+            if valid_date(person.death)!= None:
+                date[person.death]=valid_date(person.death)
+        for family in self.families.values(): 
+            if valid_date(family.married)!= None: 
+                date[family.married]=valid_date(family.married)
+            if valid_date(family.divorced)!= None: 
+                date[family.divorced]=valid_date(family.divorced)   
+        for dt, validity in date.items():
+            if dt!=None and validity!=None:
+                pt.add_row([dt])
+
+        print("\n\nUS42: Print only Valid dates from the GEDCOM file")
+        print(pt)
 
     def date_format(self, old_date):
         """function helps to format the date once used by us01 & us03"""
-        
         if valid_date(old_date)== True:
             new_date = datetime.strptime(old_date, '%d %b %Y').date()     
             return new_date
@@ -287,6 +311,7 @@ class Classification():
         false_result = list() #list save all the incorrect dates to use for testcase
 
         for person in self.people.values():
+
             if person.birthday == 'NA'or person.birthday == None:
                 continue
             else:
@@ -297,6 +322,7 @@ class Classification():
                     continue
 
         for person in self.people.values():
+
             if person.death == 'NA'or person.death == None:
                 continue
             else:
@@ -307,7 +333,8 @@ class Classification():
                     continue
         
         for family in self.families.values():
-            if family.married == 'NA'or family.married == None:
+
+            if family.married == 'NA'or family.married ==None:
                 continue
             else:
                 if self.date_format(family.married) > today: #check if the marriage of person occurs in the futrue
@@ -328,9 +355,8 @@ class Classification():
         return false_result          
 
 
-
     def us03_birth_before_death(self):
-        """US03 Birth should occur before death of an individual"""
+        "US03 Birth should occur before death of an individual"
 
         for person in self.people.values():
             if person.birthday == 'NA' or person.death == 'NA':
@@ -460,7 +486,7 @@ class Classification():
         
         print("\n\nUS35: People who were born in the last 30 days")
         print(pt)
-    
+
     def person_table(self):
         """Function prints people table """
         pt = PrettyTable()
@@ -477,13 +503,14 @@ class Classification():
             pt.add_row(family.pt_row(self.people))
         print(pt)
 
+
 def main():
     """Main function calls valid_tag function and prints the results"""
 
     #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
-    file_name = 'us04_us27.ged'
+    file_name = 'Project1.ged'
     
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
@@ -491,7 +518,7 @@ def main():
     
     classify.person_table() # print the person table
     classify.family_table() # print the families table
-    
+
     # call each of the user stories
     classify.us01_before_current_dates(d1)
     print(classify.us03_birth_before_death())
@@ -500,7 +527,7 @@ def main():
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
-
+    classify.us42_valid_date_table()
     
 if __name__ == '__main__':
     main()
