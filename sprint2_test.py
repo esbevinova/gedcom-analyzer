@@ -5,6 +5,7 @@ from project_03 import valid_date
 
 classify = Classification(r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged')
 
+
 class StoryTest(unittest.TestCase):
 
     def test_us01(self):
@@ -30,8 +31,8 @@ class StoryTest(unittest.TestCase):
     def test_us03(self):
         'US03 test Birth should occur before death of an individual'
         
-        us03 = classify.us03_birth_before_death()
-        expect = 'ERROR: INDIVIDUAL: US03: LINE NUMBER: @I2@ : Died 30 SEP 1943 before born 22 FEB 1944'
+        us03 = list(classify.us03_birth_before_death())
+        expect = ['ERROR: INDIVIDUAL: US03: @I2@: Died on 30 SEP 1943: line (34): before born on 22 FEB 1944']
 
         self.assertEqual(us03,expect)
 
@@ -68,6 +69,22 @@ class StoryTest(unittest.TestCase):
                     ('@I23@', 1), ('@I24@', 39), ('@I25@', 34), ('@I26@', 0), ('@I27@', 39), ('@28@', 68), 
                     ('@29@', 68), ('@30@', 39), ('@31@', 248), ('@32@', 202)]
         self.assertEqual (individual_ages, expect)
+    
+    def test_us29_list_deceased(self):
+        'US29 test deceased individual'
+
+        us29 = classify.us29_list_deceased()
+        expect = [('Robert /Kardashian/', '30 SEP 1943'), ('Johann /Bach', '31 MAR 1887')]
+        self.assertEqual (us29, expect)
+
+    def test_us30_list_living_married(self):
+        'US30 test living_married'
+        
+        us30 = classify.us30_list_living_married()
+        expect = [('@I1@', 'Kris /Jenner/'), ('@I6@', 'Kim /Kardashian/'),
+                  ('@I16@', 'Kaney /West/'), ('@I8@', 'Kylie /Jenner/'), ('@I22@', 'Travis /Scott/')]
+ 
+        self.assertEqual (us30,expect)
 
     def test_us31(self):
         """Function that tests us31_living_singles()"""

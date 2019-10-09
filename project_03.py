@@ -312,53 +312,50 @@ class Classification():
         if valid_date(old_date)== True:
             new_date = datetime.strptime(old_date, '%d %b %Y').date()     
             return new_date
+        
+    def before_today(self, date , today):
+        """ function to check if the date occuers in the future"""
+        """ if the date is greater than today will return false"""
+        dt = self.date_format(date)
+        today = self.date_format(today)  # calling date_format to format date of today as others dates
+
+        if dt == "NA" or dt == None:
+            return True
+
+        return dt < today #return false
     
     def us01_before_current_dates(self,today):
         """ US01 Dates (birth, marriage, divorce, death) should not be after the current date"""
-
-        today =date.today()
+        today = date.today() #retrieve the current day
         today = today.strftime('%d %b %Y') #give current day in string format
-        today = self.date_format(today) # calling date_format to format date of today as others dates
         false_result = list() #list save all the incorrect dates to use for testcase
 
         for person in self.people.values():
-            if person.birthday == 'NA'or person.birthday == None:
+            if self.before_today(person.birthday, today) == True: #if the birth == 'NA' or None skip
                 continue
             else:
-                if self.date_format(person.birthday) > today: #check if the birthday of person occurs in the futrue
-                    print ("ERROR: INDIVIDUAL: US01:  ID: {} : Birthday {} Occurs in the future".format(person.i_d, person.birthday))
+                    print ("ERROR: INDIVIDUAL: US01: ID: {} : Birthday {}: on line ({}): Occurs in the future".format(person.i_d, person.birthday, person.birthday_line))
                     false_result.append('INDI BIRTH ERROR')
-                else:
-                    continue
 
         for person in self.people.values():
-            if person.death == 'NA'or person.death == None:
+            if self.before_today(person.death, today) == True:
                 continue
             else:
-                if self.date_format(person.death) > today: #check if the death of person occurs in the futrue
-                    print ("ERROR: INDIVIDUAL: US01:  LINE NUMBER: {} : Death {} Occurs in the future".format(person.i_d, person.death))
+                    print ("ERROR: INDIVIDUAL: US01: ID: {} : Death {}: on line({}) Occurs in the future".format(person.i_d, person.death, person.death_line))
                     false_result.append('INDI DEAT ERROR')
-                else:
-                    continue
-        
+ 
         for family in self.families.values():
-            if family.married == 'NA'or family.married == None:
+            if self.before_today(family.married, today) == True:
                 continue
             else:
-                if self.date_format(family.married) > today: #check if the marriage of person occurs in the futrue
-                    print ("ERROR: FAMILY: US01:  LINE NUMBER: {} : Marriage date {} Occurs in the future".format(family.i_d, family.married))
+                    print ("ERROR: FAMILY: US01: ID: {} : Marriage date {} on line ({}) Occurs in the future".format(family.i_d, family.married, family.married_line))
                     false_result.append('FAM MARR ERROR')
-                else:
-                    continue
 
-            if family.divorced == 'NA' or family.divorced == None:
+            if self.before_today(family.divorced, today) == True:
                 continue
             else:
-                if self.date_format(family.divorced) > today: #check if the divorced date occurs in the futrue
-                    print ("ERROR: FAMILY: US01: LINE NUMBER: {} : Divorce date {} Occurs in the future".format(family.i_d, family.divorced))
+                    print ("ERROR: FAMILY: US01: ID: {} : Divorce date {} on line ({}) Occurs in the future".format(family.i_d, family.divorced, family.divorced_line))
                     false_result.append('FAM DIVO ERROR')  
-                else:
-                    continue
 
         return false_result   
 
@@ -395,7 +392,7 @@ class Classification():
                 birth = self.date_format(person.birthday)
                 death = self.date_format(person.death)
                 if death < birth:
-                    return ("ERROR: INDIVIDUAL: US03: LINE NUMBER: {} : Died {} before born {}".format(person.i_d, person.death, person.birthday)) 
+                    yield ("ERROR: INDIVIDUAL: US03: {}: Died on {}: line ({}): before born on {}".format(person.i_d, person.death, person.death_line, person.birthday)) 
                 else:
                     continue
 
@@ -471,6 +468,64 @@ class Classification():
         for i_d, age in self.us27_individual_ages():
             pt.add_row([i_d, age])
         print('us27: Ages of individuals')
+        print(pt)
+    
+    def us29_list_deceased(self):
+        """"List all deceased individuals in a GEDCOM file"""
+        today = date.today() #retrieve the current day
+        today = today.strftime('%d %b %Y') #give current day in string format
+        deceased =list() #list has all deceased individuls 
+
+        for person in self.people.values():
+            if self.before_today(person.death,today) == False or person.alive == True:
+                continue
+            else:
+                deceased.append((person.name, person.death))
+
+        return deceased
+
+    def us30_list_living_married(self):
+        """list all living married"""
+        living_married = list()
+
+        for family in self.families.values():
+            wife_name = self.people[family.wife_id].name
+            husb_name = self.people[family.husb_id].name
+
+            if family.divorced == None or family.divorced == 'NA':
+                if self.people[family.wife_id].alive == True:
+                    living_married.append((family.wife_id, wife_name))
+                else:
+                    continue
+            else:
+                continue
+
+            if family.divorced == None or family.divorced == 'NA':
+                if self.people[family.husb_id].alive == True:
+                    living_married.append((family.husb_id, husb_name))
+                else:
+                    continue
+            else:
+                continue
+
+        return living_married   
+    
+    def us29_deceased_table(self):
+        """User Story 29: Function prints list_deceased table"""
+        pt = PrettyTable()
+        pt.field_names = ["Name", "Death date"]
+        for name, dt in self.us29_list_deceased():
+            pt.add_row([name, dt])
+        print("\nUS29: Individuals deceased")
+        print(pt)
+
+    def us30_living_married_table(self):
+        """User Story 30: Function prints living_married table"""
+        pt = PrettyTable()
+        pt.field_names = ["ID", "Name"]
+        for id, name in self.us30_list_living_married():
+            pt.add_row([id, name])
+        print("\nUS30: Living married")
         print(pt)
 
     def us31_living_singles(self):
@@ -576,9 +631,9 @@ class Classification():
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged'
+    #file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
-    #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
+    file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week6/gedcom-analyzer-Sprint2/test_results.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/test_results.ged'
     
     day = '24 Sep 2019'
@@ -592,7 +647,8 @@ def main():
     classify.us01_before_current_dates(d1)
     for statement in classify.us02_death_before_marriage():
         print(statement)
-    print(classify.us03_birth_before_death())
+    for err in classify.us03_birth_before_death():
+        print(err)
     for err in classify.us04_marriage_before_divorse():
         print(err)
     for err in classify.us07_over150():
@@ -600,6 +656,8 @@ def main():
     for err in classify.us10_marriage_after14():
         print(err)
     classify.us27_ages_table()
+    classify.us29_deceased_table()
+    classify.us30_living_married_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
