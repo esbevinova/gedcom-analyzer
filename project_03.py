@@ -212,7 +212,7 @@ class Classification():
         birthday_line = 0
         death = 'NA'
         death_line = 0
-        alive = bool
+        alive=True
         child = 'NA'
         child_line = 0
         spouse = 'NA'
