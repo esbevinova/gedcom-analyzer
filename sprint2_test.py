@@ -3,7 +3,7 @@ from datetime import datetime
 from project_03 import Person, Family, Classification
 from project_03 import valid_date
 
-classify = Classification('/Users/nadik/Desktop/gedcom-analyzer/test_results.ged')
+classify = Classification(r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -16,6 +16,16 @@ class StoryTest(unittest.TestCase):
         expect = ['INDI BIRTH ERROR', 'INDI DEAT ERROR', 'FAM MARR ERROR', 'FAM DIVO ERROR']   
 
         self.assertEqual(us01, expect)
+    
+    def test_us02(self):
+        'Function that tests us02_death_before_marriage(): US02 Birth should occur before marriage of an individual'      
+        us02 = list(classify.us02_death_before_marriage())
+        expect = ["ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 1978-07-08 on line 297",
+                  "ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 2020-04-24 on line 307",
+                  "ERROR: FAMILY: US02: ID: @I4@ - Husband's birth date 2019-09-17 on line 53 occurs after his marriage date 2016-08-11 on line 316",
+                  "ERROR: FAMILY: US02: ID: @I5@ - Wife's birth date 2019-09-18 on line 63 occurs after her marriage date 2006-07-14 on line 327"]
+
+        self.assertEqual(us02,expect)
        
     def test_us03(self):
         'US03 test Birth should occur before death of an individual'

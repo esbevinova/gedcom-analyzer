@@ -212,7 +212,7 @@ class Classification():
         birthday_line = 0
         death = 'NA'
         death_line = 0
-        alive = bool
+        alive = True
         child = 'NA'
         child_line = 0
         spouse = 'NA'
@@ -367,7 +367,23 @@ class Classification():
         for family in self.families.values():
             print(family.i_d)
             for ch, chl in zip(family.children, family.children_lines):
-                print(ch, chl)       
+                print(ch, chl)     
+
+    def us02_death_before_marriage(self):
+        """US02: Check if birth occurs before marriage of an individual"""
+        for family in self.families.values():
+            if self.people[family.husb_id].birthday == 'NA' or family.married == None or self.people[family.wife_id].birthday == 'NA':
+                continue
+            elif(valid_date(self.people[family.husb_id].birthday)==True)and(valid_date(family.married)):
+                husb_birth = self.date_format(self.people[family.husb_id].birthday)
+                wife_birth = self.date_format(self.people[family.wife_id].birthday)
+                marriage = self.date_format(family.married)
+                if husb_birth > marriage:
+                    yield ("ERROR: FAMILY: US02: ID: {} - Husband's birth date {} on line {} occurs after his marriage date {} on line {}".format(family.husb_id, husb_birth, self.people[family.husb_id].birthday_line, marriage, family.married_line))               
+                if wife_birth > marriage:
+                    yield ("ERROR: FAMILY: US02: ID: {} - Wife's birth date {} on line {} occurs after her marriage date {} on line {}".format(family.wife_id, wife_birth, self.people[family.wife_id].birthday_line, marriage, family.married_line))
+                else:
+                    continue  
 
 
 
@@ -536,10 +552,10 @@ class Classification():
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    #file_name = '/Users/katya/Downloads/gedcom-analyzer-master/us31_us32.ged'
+    file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week5/us01_us03.ged'
-    file_name = '/Users/nadik/Desktop/gedcom-analyzer/test_results.ged'
+    #file_name = '/Users/nadik/Desktop/gedcom-analyzer/test_results.ged'
     
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
@@ -550,6 +566,8 @@ def main():
     
     # call each of the user stories
     classify.us01_before_current_dates(d1)
+    for statement in classify.us02_death_before_marriage():
+        print(statement)
     print(classify.us03_birth_before_death())
     for err in classify.us04_marriage_before_divorse():
         print(err)
