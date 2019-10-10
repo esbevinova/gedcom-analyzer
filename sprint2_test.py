@@ -90,7 +90,8 @@ class StoryTest(unittest.TestCase):
         """Function that tests us31_living_singles()"""
         #classify = Classification('/Users/katya/Documents/Fall19/555/revised_gedcom/us31_us32.ged')
         living_singles_list = classify.us31_living_singles()
-        expect =  [('@28@', 'Smith /Joseph'), ('@29@', 'Sasquatch /Kyle'), ('@30@', 'Birch /Cynthia'), ('@31@', 'Ludwig /Beethoven')]
+        #expect =  [('@28@', 'Smith /Joseph'), ('@29@', 'Sasquatch /Kyle'), ('@30@', 'Birch /Cynthia'), ('@31@', 'Ludwig /Beethoven')]
+        expect =  [('@28@', 'Smith /Joseph'), ('@29@', 'Sasquatch /Kyle')]
         self.assertEqual (living_singles_list, expect)
     
     def test_us32(self):
