@@ -9,5 +9,4 @@ install:
   - pip install PrettyTable
 # command to run tests
 script:
-  - pytest --cov prettytable
   - python -m unittest project_03.py
