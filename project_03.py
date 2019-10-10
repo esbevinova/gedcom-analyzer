@@ -365,7 +365,7 @@ class Classification():
             print(family.i_d)
             for ch, chl in zip(family.children, family.children_lines):
                 print(ch, chl)     
-"""
+
     def us02_death_before_marriage(self):
         """US02: Check if birth occurs before marriage of an individual"""
         for family in self.families.values():
@@ -381,7 +381,7 @@ class Classification():
                     yield ("ERROR: FAMILY: US02: ID: {} - Wife's birth date {} on line {} occurs after her marriage date {} on line {}".format(family.wife_id, wife_birth, self.people[family.wife_id].birthday_line, marriage, family.married_line))
                 else:
                     continue  
-"""
+
     def us03_birth_before_death(self):
         """US03 Birth should occur before death of an individual"""
 
