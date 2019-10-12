@@ -3,7 +3,7 @@ from datetime import datetime
 from project_03 import Person, Family, Classification
 from project_03 import valid_date
 
-classify = Classification(r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged')
+classify = Classification('/Users/katya/Documents/GitHub/gedcom-analyzer/test_results.ged')
 
 
 class StoryTest(unittest.TestCase):
