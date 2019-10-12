@@ -625,11 +625,7 @@ class Classification():
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    #file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged'
-    #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
     file_name = './test_results.ged'
-    #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week6/gedcom-analyzer-Sprint2/test_results.ged'
-    #file_name = '/Users/nadik/Desktop/gedcom-analyzer/test_results.ged'
     
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
