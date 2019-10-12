@@ -436,22 +436,16 @@ class Classification():
                 marriage_date = self.date_format(family.married)      
                 husb_age = self.date_format(self.people[family.husb_id].birthday)              
                 wife_age = self.date_format(self.people[family.wife_id].birthday)
-                husb_age_at_marriage = marriage_date.year - husb_age.year - ((marriage_date.month, marriage_date.day) < (husb_age.month, husb_age.day))
-                wife_age_at_marriage = marriage_date.year - wife_age.year - ((marriage_date.month, marriage_date.day) < (wife_age.month, wife_age.day))
+                #husb_age_at_marriage = marriage_date.year - husb_age.year - ((marriage_date.month, marriage_date.day) < (husb_age.month, husb_age.day))
+                #wife_age_at_marriage = marriage_date.year - wife_age.year - ((marriage_date.month, marriage_date.day) < (wife_age.month, wife_age.day))
+                husb_age_at_marriage = (marriage_date - husb_age).days/365.25
+                wife_age_at_marriage = (marriage_date - wife_age).days/365.25
                 if husb_age_at_marriage < 14:
                     yield "ERROR: FAMILY: US10: ID: {}: husband's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
                 if wife_age_at_marriage < 14:
                     yield "ERROR: FAMILY: US10: ID: {}: wife's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
                 else:
                     continue
-                """
-                if Classification.date_within(self, marriage_date, husb_age, 14, "years"):
-                    yield "ERROR: FAMILY: US10: {}: husband's age is less than 14 years when married".format(family.i_d)
-                if Classification.date_within(self, marriage_date, wife_age, 14, "years"):
-                    yield "ERROR: FAMILY: US10: {}: wife's age is less than 14 years when married".format(family.i_d)
-                else:
-                    continue
-                """
 
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
@@ -633,7 +627,8 @@ def main():
 
     #file_name = r'C:\Users\ebevi\Documents\GitHub\gedcom-analyzer\test_results.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/us04_us27.get'
-    file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week6/gedcom-analyzer-Sprint2/test_results.ged'
+    file_name = './test_results.ged'
+    #file_name = '/Users/MaramAlrshoud/Documents/Universites/Stevens/Fall 2019/SSW 555/Week6/gedcom-analyzer-Sprint2/test_results.ged'
     #file_name = '/Users/nadik/Desktop/gedcom-analyzer/test_results.ged'
     
     day = '24 Sep 2019'
