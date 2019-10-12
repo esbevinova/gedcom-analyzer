@@ -10,4 +10,3 @@ install:
 # command to run tests
 script:
   - python -m unittest project_03.py
-  - python -m unittest sprint2_test.py
