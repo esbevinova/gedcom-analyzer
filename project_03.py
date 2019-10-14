@@ -4,6 +4,8 @@ from datetime import datetime
 from collections import defaultdict
 import datetime as dt
 
+invalid_date=[]
+
 def valid_tag(file_name):
     """Function reads .ged file line by line,
     checks for the validity of the tags in the file,
@@ -59,7 +61,8 @@ def valid_date (date):
                 dt.datetime(date.year,date.month,date.day)
                 return True
             except ValueError:
-                return None
+                invalid_date.append(date)
+                return False
 
 
 class Person():
@@ -486,6 +489,11 @@ class Classification():
         
         print("\n\nUS35: People who were born in the last 30 days")
         print(pt)
+        
+    def us42_invalid_date_error(self):
+        """User Story: 42: Function prints valid_date() Error"""
+        for i in invalid_date:
+            print ("Error: US42: {} is an invalid date".format(i))
 
     def person_table(self):
         """Function prints people table """
@@ -527,7 +535,7 @@ def main():
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
-    classify.us42_valid_date_table()
+    classify.us42_invalid_date_error()
     
 if __name__ == '__main__':
     main()
