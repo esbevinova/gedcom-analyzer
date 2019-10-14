@@ -4,6 +4,8 @@ from datetime import datetime
 from collections import defaultdict
 import datetime as dt
 
+invalid_date=[]
+
 def valid_tag(file_name):
     """Function reads .ged file line by line,
     checks for the validity of the tags in the file,
@@ -48,8 +50,20 @@ def valid_tag(file_name):
                     else:
                         continue
                 yield answer
-
 def valid_date (date):
+        """ Check whether the date is valid or not 
+        returns true if the date is valid
+        returns false if the date is not valid"""
+        if (date!=None)and(date!="NA"):
+            try:
+                date=datetime.strptime(date, "%d %b %Y").date()
+                dt.datetime(date.year,date.month,date.day)
+                return True
+            except ValueError:
+                invalid_date.append(date)
+                return False
+
+'''def valid_date (date):
         """ Check whether the date is valid or not 
         returns true if the date is valid
         returns false if the date is not valid"""
@@ -60,8 +74,7 @@ def valid_date (date):
                 dt.datetime(date.year,date.month,date.day)
                 return True
             except ValueError:
-                return None
-
+                return None'''
 
 class Person():
     """Class Person"""
@@ -411,6 +424,40 @@ class Classification():
                             yield "ERROR: FAMILY: US04: {}: Divorced on {} (line {}) before married on {} (line {})".format(family.i_d, family.divorced, family.divorced_line, family.married, family.married_line)
                         else:
                             continue
+                            
+    def us05_marriage_before_death(self):
+        """User story 05: Function that checks if marriage occurs before death of spouses"""
+        for family in self.families.values():
+            for person in self.people.values():
+                if family.husb_id == person.i_d:
+                    if (person.death != None) and (family.married != None):
+                        if (family.married > person.death) == True:
+                            yield "ERROR: FAMILY: US05: {}: Married on {} (line {}) after Death of Husband on {} (line {})".format(family.i_d, family.married, family.married_line, person.death, person.death_line)
+                        else:
+                            continue
+                elif family.wife_id == person.i_d:
+                    if (person.death != None) and (family.married != None):
+                        if (family.married > person.death) == True:
+                            yield "ERROR: FAMILY: US05: {}: Married on {} (line {}) after Death of Wife on {} (line {})".format(family.i_d, family.married, family.married_line, person.death, person.death_line)
+                        else:
+                            continue
+    
+    def us06_divorce_before_death(self):
+        """User story 06: Function that checks if divorce occurs before death of spouses"""
+        for family in self.families.values():
+            for person in self.people.values():
+                if family.husb_id == person.i_d:
+                    if (person.death != None) and (family.divorced != None):
+                        if (family.divorced > person.death) == True:
+                            yield "ERROR: FAMILY: US06: {}: Divorced on {} (line {}) after Death of Husband on {} (line {})".format(family.i_d, family.divorced, family.divorced_line, person.death, person.death_line)
+                        else:
+                            continue
+                elif family.wife_id == person.i_d:
+                    if (person.death != None) and (family.divorced != None):
+                        if (family.divorced > person.death) == True:
+                            yield "ERROR: FAMILY: US06: {}: Divorced on {} (line {}) after Death of Wife on {} (line {})".format(family.i_d, family.divorced, family.divorced_line, person.death, person.death_line)
+                        else:
+                            continue
 
     def us07_over150(self):
         """User story 07 checks for persons age and returns an error if a person is over 150 years old, 
@@ -605,6 +652,11 @@ class Classification():
         
         print("\n\nUS35: People who were born in the last 30 days")
         print(pt)
+        
+    def us42_invalid_date_error(self):
+        """User Story: 42: Function prints valid_date() Error"""
+        for i in invalid_date:
+            print ("Error: US42: {} is an invalid date".format(i))
                 
     def person_table(self):
         """Function prints people table """
@@ -642,6 +694,10 @@ def main():
         print(err)
     for err in classify.us04_marriage_before_divorse():
         print(err)
+    for err in classify.us05_marriage_before_death():
+        print(err)
+    for err in classify.us06_divorce_before_death():
+        print(err)
     for err in classify.us07_over150():
         print(err)
     for err in classify.us10_marriage_after14():
@@ -652,6 +708,7 @@ def main():
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
+    classify.us42_invalid_date_error()
     
     
 
