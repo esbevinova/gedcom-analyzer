@@ -42,6 +42,20 @@ class StoryTest(unittest.TestCase):
         expect = ['ERROR: FAMILY: US04: @F4@: Divorced on 13 DEC 2005 (line 329) before married on 14 JUL 2006 (line 327)']
         print(marriage_divorse)
         self.assertEqual(marriage_divorse, expect)
+        
+    def test_us05(self):
+        """Function that tests us05_marriage_before_death()"""
+        marriage = list(classify.us05_marriage_before_death())
+        expect =["ERROR: FAMILY: US05: @F1@: Married on 1978-07-08 (line 339) after Death of Husband on 1943-09-30 (line 34)","ERROR: FAMILY: US05: @F13@: Married on 2019-07-08 (line 438) after Death of Wife on 2000-06-12 (line 319)"]
+        print(marriage)
+        self.assertEqual(marriage, expect)
+
+    def test_us06(self):
+        """Function that tests us06_divorce_before_death()"""
+        divorse = list(classify.us06_divorce_before_death())
+        expect = ["ERROR: FAMILY: US06: @F2@: Divorced on 2021-03-23 (line 351) after Death of Husband on 2020-11-30 (line 44)","ERROR: FAMILY: US06: @F12@: Divorced on 2016-03-10 (line 430) after Death of Wife on 2000-09-30 (line 298)"]
+        print(divorse)
+        self.assertEqual(divorse, expect)
 
     def test_us07(self):
         """Function tests us07_over150()"""
