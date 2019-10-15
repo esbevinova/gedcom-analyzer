@@ -50,6 +50,7 @@ def valid_tag(file_name):
                     else:
                         continue
                 yield answer
+                
 def valid_date (date):
         """ Check whether the date is valid or not 
         returns true if the date is valid
