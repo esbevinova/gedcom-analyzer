@@ -63,19 +63,7 @@ def valid_date (date):
                 invalid_date.append(date)
                 return False
 
-'''def valid_date (date):
-        """ Check whether the date is valid or not 
-        returns true if the date is valid
-        returns false if the date is not valid"""
-    
-        if (date!=None)and(date!="NA"):
-            try:
-                date=datetime.strptime(date, "%d %b %Y").date()
-                dt.datetime(date.year,date.month,date.day)
-                return True
-            except ValueError:
-                return None'''
-
+            
 class Person():
     """Class Person"""
 
@@ -430,15 +418,19 @@ class Classification():
         for family in self.families.values():
             for person in self.people.values():
                 if family.husb_id == person.i_d:
-                    if (person.death != None) and (family.married != None):
-                        if (family.married > person.death) == True:
-                            yield "ERROR: FAMILY: US05: {}: Married on {} (line {}) after Death of Husband on {} (line {})".format(family.i_d, family.married, family.married_line, person.death, person.death_line)
+                    if (valid_date(person.death) == True) and (valid_date(family.married) == True):
+                        married = self.date_format(family.married) 
+                        death = self.date_format(person.death) 
+                        if (married > death) == True:
+                            yield "ERROR: FAMILY: US05: {}: Married on {} (line {}) after Death of Husband on {} (line {})".format(family.i_d, married, family.married_line, death, person.death_line)
                         else:
                             continue
                 elif family.wife_id == person.i_d:
-                    if (person.death != None) and (family.married != None):
-                        if (family.married > person.death) == True:
-                            yield "ERROR: FAMILY: US05: {}: Married on {} (line {}) after Death of Wife on {} (line {})".format(family.i_d, family.married, family.married_line, person.death, person.death_line)
+                    if (valid_date(person.death) == True) and (valid_date(family.married) == True):
+                        married = self.date_format(family.married) 
+                        death = self.date_format(person.death)
+                        if (married > death) == True:
+                            yield "ERROR: FAMILY: US05: {}: Married on {} (line {}) after Death of Wife on {} (line {})".format(family.i_d, married, family.married_line, death, person.death_line)
                         else:
                             continue
     
@@ -447,15 +439,19 @@ class Classification():
         for family in self.families.values():
             for person in self.people.values():
                 if family.husb_id == person.i_d:
-                    if (person.death != None) and (family.divorced != None):
-                        if (family.divorced > person.death) == True:
-                            yield "ERROR: FAMILY: US06: {}: Divorced on {} (line {}) after Death of Husband on {} (line {})".format(family.i_d, family.divorced, family.divorced_line, person.death, person.death_line)
+                    if (valid_date(person.death) == True) and (valid_date(family.divorced) == True):
+                        divorced = self.date_format(family.divorced) 
+                        death = self.date_format(person.death)
+                        if (divorced > death) == True:
+                            yield "ERROR: FAMILY: US06: {}: Divorced on {} (line {}) after Death of Husband on {} (line {})".format(family.i_d, divorced, family.divorced_line, death, person.death_line)
                         else:
                             continue
                 elif family.wife_id == person.i_d:
-                    if (person.death != None) and (family.divorced != None):
-                        if (family.divorced > person.death) == True:
-                            yield "ERROR: FAMILY: US06: {}: Divorced on {} (line {}) after Death of Wife on {} (line {})".format(family.i_d, family.divorced, family.divorced_line, person.death, person.death_line)
+                    if (valid_date(person.death) == True) and (valid_date(family.divorced) == True):
+                        divorced = self.date_format(family.divorced) 
+                        death = self.date_format(person.death)
+                        if (divorced > death) == True:
+                            yield "ERROR: FAMILY: US06: {}: Divorced on {} (line {}) after Death of Wife on {} (line {})".format(family.i_d, divorced, family.divorced_line, death, person.death_line)
                         else:
                             continue
 
