@@ -706,10 +706,7 @@ def main():
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
     classify.us42_invalid_date_error()
-    
-    
-
-    
+       
 if __name__ == '__main__':
     main()
 
