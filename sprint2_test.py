@@ -87,7 +87,7 @@ class StoryTest(unittest.TestCase):
         'US29 test deceased individual'
 
         us29 = classify.us29_list_deceased()
-        expect = [('Robert /Kardashian/', '30 SEP 1943'), ('Johann /Bach', '31 MAR 1887')]
+        expect = [('Robert /Kardashian/', '30 SEP 1943'), ('Johann /Bach', '31 MAR 1887'), ('Jeny /Jenner/', '30 SEP 2000'), ('Yan /Jenner/', '12 JUN 2000')]
         self.assertEqual (us29, expect)
 
     def test_us30_list_living_married(self):
