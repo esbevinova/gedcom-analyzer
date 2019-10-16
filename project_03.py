@@ -473,6 +473,11 @@ class Classification():
         
         print("\n\nUS35: People who were born in the last 30 days")
         print(pt)
+        
+    def us42_invalid_date_error(self):
+        """User Story: 42: Function prints valid_date() Error"""
+        for i in invalid_date:
+            print ("Error: US42: {} is an invalid date".format(i))
 
     def person_table(self):
         """Function prints people table """
