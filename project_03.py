@@ -580,7 +580,7 @@ class Classification():
 
         # add each person
         for person in self.people.values():
-            if person.birthday == 'NA' or person.birthday == '':
+            if person.birthday == 'NA' or person.birthday == '' or person.birthday == None:
                 continue
             else:
                 birthdays[person.birthday].append(person.name)
