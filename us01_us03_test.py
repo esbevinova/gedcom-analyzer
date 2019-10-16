@@ -21,8 +21,8 @@ class StoriesTest(unittest.TestCase):
     def test_us03(self):
         'US03 test Birth should occur before death of an individual'
         
-        us03 = classify.us03_birth_before_death()
-        expect = 'ERROR: INDIVIDUAL: US03: LINE NUMBER: @I2@ : Died 30 SEP 1943 before born 22 FEB 1944'
+        us03 = list(classify.us03_birth_before_death())
+        expect = ['ERROR: INDIVIDUAL: US03: @I2@: Died on 30 SEP 1943: line (34): before born on 22 FEB 1944']
 
         self.assertEqual(us03,expect)
 
