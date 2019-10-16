@@ -123,7 +123,7 @@ class StoryTest(unittest.TestCase):
     def test_valid_date(self):
         """Function that tests valid_date()"""
         self.assertEqual (valid_date('10 SEP 2019'), True)
-        self.assertEqual (valid_date('31 FRB 2019'), None)
+        self.assertEqual (valid_date('31 FRB 2019'), False)
 
 
 
