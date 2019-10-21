@@ -130,11 +130,12 @@ class Family():
     pt_lables = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 
                 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
 
-    def __init__(self, i_d, married, married_line, divorced, divorced_line, husb_id, husb_id_line, 
+    def __init__(self, i_d, i_d_line, married, married_line, divorced, divorced_line, husb_id, husb_id_line, 
                                     wife_id, wife_id_line, children, children_lines):
         """Function init"""
 
         self.i_d = i_d
+        self.i_d_line = i_d_line
         self.married = married 
         self.married_line = str(married_line)
         self.divorced = divorced
@@ -220,6 +221,7 @@ class Classification():
         spouse = 'NA'
         spouse_line = 0
 
+        i_d_line = 0
         married = 'NA'
         married_line = 0
         divorced = 'NA'
@@ -274,6 +276,7 @@ class Classification():
 
             #Family entity
             elif key[1] == 'FAM':
+                i_d_line = key[3]
                 for value in self.entity.values():    
                     for i in value:
                         if i[0] == '1' and i[1] == 'MARR':    #get marriage date
@@ -302,7 +305,7 @@ class Classification():
                             else:
                                 divorced = 'NA'
                     
-                self.families[key[2]] = Family(key[2], married, married_line, divorced, divorced_line, husb_id, husb_id_line, 
+                self.families[key[2]] = Family(key[2], i_d_line, married, married_line, divorced, divorced_line, husb_id, husb_id_line, 
                                     wife_id, wife_id_line, children, children_lines)   #create an instance of class family
                 children = []
                 children_lines = []
@@ -368,10 +371,11 @@ class Classification():
             for ch, chl in zip(family.children, family.children_lines):
                 print(ch, chl)     
 
-    def us02_death_before_marriage(self):
+    def us02_birth_before_marriage(self):
         """US02: Check if birth occurs before marriage of an individual"""
+        """
         for family in self.families.values():
-            if self.people[family.husb_id].birthday == 'NA' or family.married == None or self.people[family.wife_id].birthday == 'NA':
+            if self.people[family.husb_id].birthday == 'NA' or family.married == None or self.people[family.wife_id].birthday == 'NA' or self.people[family.wife_id].birthday == None or self.people[family.husb_id].birthday == None:
                 continue
             elif(valid_date(self.people[family.husb_id].birthday)==True)and(valid_date(family.married)):
                 husb_birth = self.date_format(self.people[family.husb_id].birthday)
@@ -383,7 +387,28 @@ class Classification():
                     yield ("ERROR: FAMILY: US02: ID: {} - Wife's birth date {} on line {} occurs after her marriage date {} on line {}".format(family.wife_id, wife_birth, self.people[family.wife_id].birthday_line, marriage, family.married_line))
                 else:
                     continue  
-
+        """
+        for family in self.families.values():
+            if family.married == None or family.married == "NA":
+                continue
+            else:
+                marriage = self.date_format(family.married)
+                if self.people[family.wife_id].birthday == 'NA' or self.people[family.wife_id].birthday == None:
+                    continue
+                else:
+                    if valid_date(self.people[family.wife_id].birthday) and valid_date(family.married):
+                        wife_birth = self.date_format(self.people[family.wife_id].birthday)
+                        if wife_birth > marriage:
+                            yield ("ERROR: FAMILY: US02: ID: {} - Wife's birth date {} on line {} occurs after her marriage date {} on line {}".format(family.wife_id, wife_birth, self.people[family.wife_id].birthday_line, marriage, family.married_line))
+                        
+                if self.people[family.husb_id].birthday == 'NA' or self.people[family.husb_id].birthday == None:
+                    continue
+                else:
+                    if valid_date(self.people[family.husb_id].birthday) and valid_date(family.married):
+                        husb_birth = self.date_format(self.people[family.husb_id].birthday)
+                        if husb_birth > marriage:
+                            yield ("ERROR: FAMILY: US02: ID: {} - Husband's birth date {} on line {} occurs after his marriage date {} on line {}".format(family.husb_id, husb_birth, self.people[family.husb_id].birthday_line, marriage, family.married_line))                             
+            
     def us03_birth_before_death(self):
         """US03 Birth should occur before death of an individual"""
 
@@ -473,15 +498,13 @@ class Classification():
     
     def us10_marriage_after14(self):
         """Checks if marriage took place at least 14 years after birth of both spouses (parents must be at least 14 years old)"""
-        for family in self.families.values():
-            if self.people[family.husb_id].birthday == 'NA' or self.people[family.wife_id].birthday == 'NA' or family.married == None:
+        """for family in self.families.values():
+            if self.people[family.husb_id].birthday == 'NA' or self.people[family.wife_id].birthday == 'NA' or self.people[family.husb_id].birthday == None or self.people[family.wife_id].birthday == None or family.married == None or family.married == 'NA':
                 continue
             else:
                 marriage_date = self.date_format(family.married)      
                 husb_age = self.date_format(self.people[family.husb_id].birthday)              
                 wife_age = self.date_format(self.people[family.wife_id].birthday)
-                #husb_age_at_marriage = marriage_date.year - husb_age.year - ((marriage_date.month, marriage_date.day) < (husb_age.month, husb_age.day))
-                #wife_age_at_marriage = marriage_date.year - wife_age.year - ((marriage_date.month, marriage_date.day) < (wife_age.month, wife_age.day))
                 husb_age_at_marriage = (marriage_date - husb_age).days/365.25
                 wife_age_at_marriage = (marriage_date - wife_age).days/365.25
                 if husb_age_at_marriage < 14:
@@ -490,6 +513,76 @@ class Classification():
                     yield "ERROR: FAMILY: US10: ID: {}: wife's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
                 else:
                     continue
+        """
+        for family in self.families.values():
+            if family.married == None or family.married == 'NA':
+                continue
+            else:
+                marriage_date = self.date_format(family.married)
+                if self.people[family.husb_id].birthday == 'NA' or self.people[family.husb_id].birthday == None:
+                    continue
+                else:      
+                    husb_age = self.date_format(self.people[family.husb_id].birthday)              
+                    husb_age_at_marriage = (marriage_date - husb_age).days/365.25
+                    if husb_age_at_marriage < 14:
+                        yield "ERROR: FAMILY: US10: ID: {}: husband's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
+
+                if self.people[family.wife_id].birthday == 'NA' or self.people[family.wife_id].birthday == None:
+                    continue
+                else:
+                    wife_age = self.date_format(self.people[family.wife_id].birthday)
+                    wife_age_at_marriage = (marriage_date - wife_age).days/365.25
+                    if wife_age_at_marriage < 14:
+                        yield "ERROR: FAMILY: US10: ID: {}: wife's age is less than 14 years old at the time of marriage {} (line {})".format(family.i_d, family.married, family.married_line)
+
+    def us12_parents_not_too_old(self):
+        """Mother should be less than 60 years older than her children and father should be less than 80 years older than his children"""
+        for family in self.families.values():
+            if self.people[family.husb_id].birthday == 'NA' or self.people[family.husb_id].birthday == None:
+                continue
+            else:
+                if valid_date(self.people[family.husb_id].birthday)==True:
+                    fathers_birthday = self.date_format(self.people[family.husb_id].birthday)
+                    for child in family.children:
+                            if self.people[child].birthday == 'NA' or self.people[child].birthday == None or valid_date(self.people[child].birthday) == False:
+                                continue
+                            else:
+                                child_birthday = self.date_format(self.people[child].birthday)
+                                if self.date_within(fathers_birthday, child_birthday, 80, 'years'):
+                                    continue
+                                else:
+                                    yield "ERROR: FAMILY: US12: ID: {} Father's birthday {} (line {}) occurs more than 80 years before his child's birthday {} (line {})".format(self.people[family.husb_id].i_d, self.people[family.husb_id].birthday, self.people[family.husb_id].birthday_line, self.people[child].birthday, self.people[child].birthday_line)
+
+            if self.people[family.wife_id].birthday == 'NA' or self.people[family.wife_id].birthday == None:
+                continue
+            else: 
+                if valid_date(self.people[family.wife_id].birthday)==True:
+                    mothers_age = self.date_format(self.people[family.wife_id].birthday)
+                    for child in family.children:
+                        if self.people[child].birthday == 'NA' or self.people[child].birthday == None or valid_date(self.people[child].birthday) == False:
+                            continue
+                        else:
+                            child_birthday = self.date_format(self.people[child].birthday)
+                            if self.date_within(mothers_age, child_birthday, 60, 'years'):
+                                continue
+                            else:
+                                yield "ERROR: FAMILY: US12: ID: {} Mother's birthday {} (line {}) occurs more than 60 years before her child's birthday {} (line {})".format(self.people[family.wife_id].i_d, self.people[family.wife_id].birthday, self.people[family.wife_id].birthday_line, self.people[child].birthday, self.people[child].birthday_line)                      
+
+    def us14_multiple_siblings(self):
+        """User story 14: Function that checks if there are more than 5 siblings in the family."""
+        same_birthdays = defaultdict(list)
+        for family in self.families.values():
+            if len(family.children) <= 5:
+                continue
+            else:
+                for child in family.children:
+                    child_found = self.people[child]
+                    if child_found.birthday == 'NA' or child_found.birthday == None or valid_date(self.people[child].birthday)== False:
+                        continue
+                    else:
+                        same_birthdays[child_found.birthday].append(child)
+                    if len(same_birthdays[child_found.birthday]) > 5:
+                        yield 'ERROR: FAMILY: US14: Family with ID {} on line {} has more than 5 siblings with the same birthday'.format(family.i_d, family.i_d_line)
 
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
@@ -685,8 +778,8 @@ def main():
     
     # call each of the user stories
     classify.us01_before_current_dates(d1)
-    for statement in classify.us02_death_before_marriage():
-        print(statement)
+    for err in classify.us02_birth_before_marriage():
+        print(err)
     for err in classify.us03_birth_before_death():
         print(err)
     for err in classify.us04_marriage_before_divorse():
@@ -698,6 +791,10 @@ def main():
     for err in classify.us07_over150():
         print(err)
     for err in classify.us10_marriage_after14():
+        print(err)
+    for err in classify.us12_parents_not_too_old():
+        print(err)
+    for err in classify.us14_multiple_siblings():
         print(err)
     classify.us27_ages_table()
     classify.us29_deceased_table()
