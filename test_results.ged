@@ -48,7 +48,7 @@
 2 GIVN Rob
 2 SURN Kardashian
 2 _MARNM Kardashian
-1 SEX M
+1 SEX F
 1 BIRT
 2 DATE 17 SEP 2019
 1 FAMS @F3@
@@ -58,7 +58,7 @@
 2 GIVN Kourtney
 2 SURN Kardashian
 2 _MARNM Kardashian
-1 SEX F
+1 SEX M
 1 BIRT
 2 DATE 18 SEP 2019
 1 FAMS @F4@
@@ -286,6 +286,11 @@
 2 DATE 31 MAR 1685
 1 DEAT Y
 2 DATE 31 MAR 1887
+0 @33@ INDI
+1 NAME Johann /Bach
+1 SEX M
+1 BIRT
+2 DATE 31 MAR 1685
 0 @I33@ INDI
 1 NAME Jeny /Jenner/
 2 GIVN Jeny

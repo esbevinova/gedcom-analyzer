@@ -584,6 +584,37 @@ class Classification():
                     if len(same_birthdays[child_found.birthday]) > 5:
                         yield 'ERROR: FAMILY: US14: Family with ID {} on line {} has more than 5 siblings with the same birthday'.format(family.i_d, family.i_d_line)
 
+    def us21_correct_gender(self):
+        """Husband in family should be male and wife in family should be female"""
+
+        for family in self.families.values():
+
+            female_gender = self.people[family.wife_id].gender #get female gender in file
+            if female_gender == 'F' or female_gender == 'NA': #check if the gender is female or undified
+                continue
+            else:
+                yield "ERROR: US21: wife ID {}: on line# {}, has incrorrect gender {}".format(family.wife_id, self.people[family.wife_id].gender_line, self.people[family.wife_id].gender)
+
+        for family in self.families.values():
+
+            male_gender = self.people[family.husb_id].gender #get male gender in file
+            if male_gender == 'M' or male_gender == 'NA': ##check if the gender is male or undified
+                continue
+            else:
+                yield "ERROR: US21 husband ID {}: on line# ({}), has incrorrect gender {}".format(family.husb_id, self.people[family.husb_id].gender_line, self.people[family.husb_id].gender)
+    
+    def us23_uniquename_and_birthdate(self):
+        'No more than one individual with the same name and birth date should appear in a GEDCOM file'
+        unique = dict()
+
+        for person in self.people.values():
+            if person.name not in unique:
+                unique[person.name] = person.birthday
+            elif person.name in unique and person.birthday == unique[person.name]:
+                yield "ERROR: US23 Individual name {} and birthday {}: on name_line# ({}) , birth_line# ({}), already exist".format(person.name, person.birthday, person.name_line , person.birthday_line)
+            else:
+                continue
+
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
         for person in self.people.values():
@@ -796,6 +827,11 @@ def main():
         print(err)
     for err in classify.us14_multiple_siblings():
         print(err)
+    for err in classify.us21_correct_gender():
+        print(err)
+    for err in classify.us23_uniquename_and_birthdate():
+        print(err)
+        
     classify.us27_ages_table()
     classify.us29_deceased_table()
     classify.us30_living_married_table()
@@ -806,4 +842,3 @@ def main():
        
 if __name__ == '__main__':
     main()
-
