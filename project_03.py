@@ -756,11 +756,12 @@ class Classification():
                 continue
             elif(valid_date(person.birthday)==True):
                 birthdate=datetime.strptime(person.birthday, "%d %b %Y").date()
-                within = ( self.date_within(birthdate, datetime.today().date(), 30, 'days'))
-                if within == True:
-                    recent_births[person.birthday].append(person.name)
-                else:
-                    continue
+                if (datetime.today().date() - birthdate).days > 0:
+                    within = ( self.date_within(birthdate, datetime.today().date(), 30, 'days'))
+                    if within == True:
+                        recent_births[person.birthday].append(person.name)
+                    else:
+                        continue
         return recent_births
 
     def us35_recent_births_table(self):
@@ -772,6 +773,33 @@ class Classification():
             pt.add_row([dt, people])
         
         print("\n\nUS35: People who were born in the last 30 days")
+        print(pt)
+        
+    def us36_recent_deaths(self):
+        """User Story 36: List all the people in a GEDCOM file who died in the last 30 days"""
+        recent_deaths = defaultdict(list) 
+        for person in self.people.values():
+            if person.death == 'NA':
+                continue
+            elif(valid_date(person.death)==True):
+                deathdate=datetime.strptime(person.death, "%d %b %Y").date()
+                if (datetime.today().date() - deathdate).days > 0:
+                    within = ( self.date_within(deathdate, datetime.today().date(), 30, 'days'))
+                    if within == True:
+                        recent_deaths[person.death].append(person.name)
+                    else:
+                        continue
+        return recent_deaths
+
+    def us36_recent_deaths_table(self):
+        """User Story: 36: Function prints recent_deaths() table"""
+
+        pt = PrettyTable()
+        pt.field_names = ['Death', 'People']
+        for dt, people in self.us36_recent_deaths().items():
+            pt.add_row([dt, people])
+        
+        print("\n\nUS36: People who died in the last 30 days")
         print(pt)
         
     def us42_invalid_date_error(self):
