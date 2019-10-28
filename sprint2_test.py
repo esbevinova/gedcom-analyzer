@@ -21,10 +21,10 @@ class StoryTest(unittest.TestCase):
     def test_us02(self):
         'Function that tests us02_birth_before_marriage(): US02 Birth should occur before marriage of an individual'      
         us02 = list(classify.us02_birth_before_marriage())
-        expect = ["ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 1978-07-08 on line 457",
-                  "ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 2020-04-24 on line 467",
-                  "ERROR: FAMILY: US02: ID: @I4@ - Husband's birth date 2019-09-17 on line 53 occurs after his marriage date 2016-08-11 on line 476",
-                  "ERROR: FAMILY: US02: ID: @I5@ - Wife's birth date 2019-09-18 on line 63 occurs after her marriage date 2006-07-14 on line 487"]
+        expect = ["ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 1978-07-08 on line 458",
+                  "ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 2020-04-24 on line 468",
+                  "ERROR: FAMILY: US02: ID: @I4@ - Husband's birth date 2019-09-17 on line 53 occurs after his marriage date 2016-08-11 on line 477",
+                  "ERROR: FAMILY: US02: ID: @I5@ - Wife's birth date 2019-09-18 on line 63 occurs after her marriage date 2006-07-14 on line 488"]
         self.assertEqual(us02,expect)
        
     def test_us03(self):
@@ -38,21 +38,21 @@ class StoryTest(unittest.TestCase):
     def test_us04(self):
         """Function that tests us04_marriage_before_divorse()"""
         marriage_divorse = list(classify.us04_marriage_before_divorse())
-        expect = ['ERROR: FAMILY: US04: @F4@: Divorced on 13 DEC 2005 (line 489) before married on 14 JUL 2006 (line 487)']
+        expect = ['ERROR: FAMILY: US04: @F4@: Divorced on 13 DEC 2005 (line 490) before married on 14 JUL 2006 (line 488)']
         print(marriage_divorse)
         self.assertEqual(marriage_divorse, expect)
         
     def test_us05(self):
         """Function that tests us05_marriage_before_death()"""
         marriage = list(classify.us05_marriage_before_death())
-        expect =["ERROR: FAMILY: US05: @F1@: Married on 1978-07-08 (line 457) after Death of Husband on 1943-09-30 (line 34)","ERROR: FAMILY: US05: @F13@: Married on 2019-07-08 (line 556) after Death of Wife on 2000-06-12 (line 324)"]
+        expect =["ERROR: FAMILY: US05: @F1@: Married on 1978-07-08 (line 458) after Death of Husband on 1943-09-30 (line 34)","ERROR: FAMILY: US05: @F13@: Married on 2019-07-08 (line 557) after Death of Wife on 2000-06-12 (line 324)"]
         print(marriage)
         self.assertEqual(marriage, expect)
 
     def test_us06(self):
         """Function that tests us06_divorce_before_death()"""
         divorse = list(classify.us06_divorce_before_death())
-        expect = ["ERROR: FAMILY: US06: @F2@: Divorced on 2021-03-23 (line 469) after Death of Husband on 2020-11-30 (line 44)","ERROR: FAMILY: US06: @F12@: Divorced on 2016-03-10 (line 548) after Death of Wife on 2000-09-30 (line 303)"]
+        expect = ["ERROR: FAMILY: US06: @F2@: Divorced on 2021-03-23 (line 470) after Death of Husband on 2020-11-30 (line 44)","ERROR: FAMILY: US06: @F12@: Divorced on 2016-03-10 (line 549) after Death of Wife on 2000-09-30 (line 303)"]
         print(divorse)
         self.assertEqual(divorse, expect)
 
