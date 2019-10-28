@@ -71,11 +71,12 @@ class Person():
     pt_lables = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 
                 'ALIVE', 'DEATH', 'CHILD', 'SPOUSE']
 
-    def __init__(self, i_d, name, name_line, gender, gender_line, birthday, birthday_line, death, death_line, alive, 
+    def __init__(self, i_d, indi_line, name, name_line, gender, gender_line, birthday, birthday_line, death, death_line, alive, 
                 child, child_line, spouse, spouse_line):
         """Function init"""
         
         self.i_d = i_d
+        self.indi_line = str(indi_line)
         self.name = name
         self.name_line = str(name_line)
         self.gender = gender
@@ -207,6 +208,7 @@ class Classification():
         for 'INDI' data an instance of class person is created,
         for 'FAM' data an instance of class family is created"""
         
+        indi_line = 0
         name = 'NA'
         name_line = 0
         gender = 'NA'
@@ -236,6 +238,7 @@ class Classification():
          
         for key, value in self.entity.items():  #Person entity
             if key[1] == 'INDI':    
+                indi_line = key[3]
                 for value in self.entity.values():      
                     for i in value:
                         if i[0] == '1' and i[1] == 'NAME':  #get person name
@@ -271,7 +274,7 @@ class Classification():
                         elif i[0] == '2' and i[1] == 'DATE':
                             continue
 
-                self.people[key[2]] = Person(key[2], name, name_line, gender, gender_line, birthday, birthday_line,
+                self.people[key[2]] = Person(key[2], indi_line, name, name_line, gender, gender_line, birthday, birthday_line,
                                  death, death_line, alive, child, child_line, spouse, spouse_line)  #create an instance of class person
 
             #Family entity
@@ -584,6 +587,32 @@ class Classification():
                     if len(same_birthdays[child_found.birthday]) > 5:
                         yield 'ERROR: FAMILY: US14: Family with ID {} on line {} has more than 5 siblings with the same birthday'.format(family.i_d, family.i_d_line)
 
+    def us17_no_marriage_to_childeren(self):
+        """User story 17. Checks for parents not to be married to the children"""
+        for person in self.people.values():
+            if person.child != 'NA':
+                father = self.families[person.child].husb_id
+                mother = self.families[person.child].wife_id
+                for family in self.families.values():
+                    if person.i_d == family.husb_id and mother == family.wife_id:
+                        yield 'ERROR: FAMILY: US17: Family with ID {} on line {} is a marriage between mother and a child'.format(family.i_d, family.i_d_line)
+                    elif person.i_d == family.wife_id and father == family.husb_id:
+                        yield 'ERROR: FAMILY: US17: Family with ID {} on line {} is a marriage between father and a child'.format(family.i_d, family.i_d_line)
+
+    def us18_siblings_marriage(self):
+        """User story 18. Check for marriages not to be between siblings"""
+        for family in self.families.values():
+            if self.people[family.husb_id].child != 'NA' and self.people[family.wife_id].child != 'NA':
+                husb_family = self.people[family.husb_id].child
+                wife_family = self.people[family.wife_id].child
+                children_pool = self.families[husb_family].children + self.families[wife_family].children
+                if family.husb_id in children_pool and family.wife_id in children_pool:
+                    yield 'ERROR: FAMILY: US18: Family with ID {} on line {} is a marriage between siblings'.format(family.i_d, family.i_d_line)
+               
+
+
+            
+
     def us21_correct_gender(self):
         """Husband in family should be male and wife in family should be female"""
 
@@ -860,8 +889,7 @@ class Classification():
 def main():
     """Main function calls valid_tag function and prints the results"""
 
-    file_name = './test_results.ged'
-    
+    file_name = './print_output.ged' 
     day = '24 Sep 2019'
     d1= datetime.strptime(day, '%d %b %Y')
     classify = Classification(file_name)
@@ -888,6 +916,10 @@ def main():
     for err in classify.us12_parents_not_too_old():
         print(err)
     for err in classify.us14_multiple_siblings():
+        print(err)
+    for err in classify.us17_no_marriage_to_childeren():
+        print(err)
+    for err in classify.us18_siblings_marriage():
         print(err)
     for err in classify.us21_correct_gender():
         print(err)

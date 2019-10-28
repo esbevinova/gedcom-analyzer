@@ -4,7 +4,7 @@ from project_03 import Person, Family, Classification
 from project_03 import valid_date
 
 classify = Classification('./test_results.ged')
-
+nadia_sprint3_test = Classification('./nadia_sprint3_test.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -88,6 +88,20 @@ class StoryTest(unittest.TestCase):
         us14 = list(classify.us14_multiple_siblings())
         expect = ['ERROR: FAMILY: US14: Family with ID @F14@ on line 558 has more than 5 siblings with the same birthday']
         self.assertEqual(us14, expect)
+
+    def test_us17_no_marriage_to_childeren(self):
+        """Function tests user story 17 which returns an error for parents married to children"""
+        us17 = list(nadia_sprint3_test.us17_no_marriage_to_childeren())
+        expect = ['ERROR: FAMILY: US17: Family with ID @F17@ on line 143 is a marriage between father and a child', 
+                   'ERROR: FAMILY: US17: Family with ID @F18@ on line 148 is a marriage between mother and a child']
+        self.assertEqual(us17, expect)
+
+    def test_us18_siblings_marriage(self):
+        """Function tests user story 18 which returns an error for marriage between siblings"""
+        us18 = list(nadia_sprint3_test.us18_siblings_marriage())
+        expect = ['ERROR: FAMILY: US18: Family with ID @F19@ on line 153 is a marriage between siblings',
+                    'ERROR: FAMILY: US18: Family with ID @F20@ on line 160 is a marriage between siblings']
+        self.assertEqual(us18, expect)
     
     def test_us21_correct_gender(self):
         'function that tests us21_correct_gende(),Husband in family should be male and wife in family should be female'
