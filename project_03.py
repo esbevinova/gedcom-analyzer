@@ -816,12 +816,10 @@ class Classification():
                 birthday = birthdate.replace(year=today.year)
                 if birthdate < today.date():
                     within = ( self.date_within(birthday, today.date(), 30, 'days'))
-                    if within == True:
-                        upcomming_births[person.birthday].append(person.name)
-                    elif birthdate < today.date():
-                        birthday = birthdate.replace(year=d.year)
-                        if (birthday > today.date()):
-                            within = ( self.date_within(birthday, today.date(), 30, 'days'))
+                elif (within == False) and (birthdate < today.date()):
+                    birthday = birthdate.replace(year=d.year)
+                    if (birthday > today.date()):
+                        within = ( self.date_within(birthday, today.date(), 30, 'days'))
             if within == True:
                 upcomming_births[person.birthday].append(person.name)
             else:
