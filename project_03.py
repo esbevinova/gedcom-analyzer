@@ -1,6 +1,6 @@
 from prettytable import PrettyTable
 from datetime import date
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 import datetime as dt
 
@@ -802,6 +802,43 @@ class Classification():
         print("\n\nUS36: People who died in the last 30 days")
         print(pt)
         
+    def us38_upcomming_birthdays(self, today):
+        """User Story 38: List all the people in a GEDCOM file who's birthdays is in the upcomming 30 days"""
+        upcomming_births = defaultdict(list) 
+        today= datetime.strptime(today, '%d %b %Y')
+        d = today + timedelta(days = 30)
+        for person in self.people.values():
+            if (person.birthday == 'NA') or (person.alive == False):
+                continue
+            elif(valid_date(person.birthday)==True):
+                birthdate=datetime.strptime(person.birthday, "%d %b %Y").date()
+                birthday = birthdate.replace(year=today.year)
+                if (birthdate < today.date()):
+                    if (birthday - datetime.today().date()).days > 0:
+                        within = ( self.date_within(birthday, today.date(), 30, 'days'))
+                        if within == True:
+                            upcomming_births[person.birthday].append(person.name)
+                        else:
+                            continue
+                    else:
+                        birthday = birthdate.replace(year=d.year)
+                        within = ( self.date_within(birthday, today.date(), 30, 'days'))
+                        if within == True:
+                            upcomming_births[person.birthday].append(person.name)
+                        else:
+                            continue
+        return upcomming_births
+    
+    def us38_upcomming_birthdays_table(self, today):
+        """User Story: 38: Function prints us38_upcomming_birthdays() table"""
+        pt = PrettyTable()
+        pt.field_names = ['Birthdate', 'People']
+        for dt, people in self.us38_upcomming_birthdays(today).items():
+            pt.add_row([dt, people])
+        
+        print("\n\nUS38: People who's birthday is in the next 30 days")
+        print(pt)
+        
     def us42_invalid_date_error(self):
         """User Story: 42: Function prints valid_date() Error"""
         for i in invalid_date:
@@ -866,6 +903,9 @@ def main():
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
+    classify.us36_recent_deaths_table()
+    today = '25 DEC 2019'
+    classify.us38_upcomming_birthdays_table(today)
     classify.us42_invalid_date_error()
        
 if __name__ == '__main__':
