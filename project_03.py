@@ -808,25 +808,24 @@ class Classification():
         today= datetime.strptime(today, '%d %b %Y')
         d = today + timedelta(days = 30)
         for person in self.people.values():
-            if (person.birthday == 'NA') or (person.alive == False):
+           within = False
+           if (person.birthday == 'NA') or (person.birthday == None):
                 continue
-            elif(valid_date(person.birthday)==True):
+            elif valid_date(person.birthday) and person.alive:
                 birthdate=datetime.strptime(person.birthday, "%d %b %Y").date()
                 birthday = birthdate.replace(year=today.year)
-                if (birthdate < today.date()):
-                    if (birthday - datetime.today().date()).days > 0:
-                        within = ( self.date_within(birthday, today.date(), 30, 'days'))
-                        if within == True:
-                            upcomming_births[person.birthday].append(person.name)
-                        else:
-                            continue
-                    else:
+                if birthdate < today.date():
+                    within = ( self.date_within(birthday, today.date(), 30, 'days'))
+                    if within == True:
+                        upcomming_births[person.birthday].append(person.name)
+                    elif birthdate < today.date():
                         birthday = birthdate.replace(year=d.year)
+                       if (birthday > today.date()):
                         within = ( self.date_within(birthday, today.date(), 30, 'days'))
-                        if within == True:
-                            upcomming_births[person.birthday].append(person.name)
-                        else:
-                            continue
+            if within == True:
+                upcomming_births[person.birthday].append(person.name)
+            else:
+                continue
         return upcomming_births
     
     def us38_upcomming_birthdays_table(self, today):
