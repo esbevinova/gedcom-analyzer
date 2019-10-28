@@ -808,8 +808,8 @@ class Classification():
         today= datetime.strptime(today, '%d %b %Y')
         d = today + timedelta(days = 30)
         for person in self.people.values():
-           within = False
-           if (person.birthday == 'NA') or (person.birthday == None):
+            within = False
+            if (person.birthday == 'NA') or (person.birthday == None):
                 continue
             elif valid_date(person.birthday) and person.alive:
                 birthdate=datetime.strptime(person.birthday, "%d %b %Y").date()
@@ -820,8 +820,8 @@ class Classification():
                         upcomming_births[person.birthday].append(person.name)
                     elif birthdate < today.date():
                         birthday = birthdate.replace(year=d.year)
-                       if (birthday > today.date()):
-                        within = ( self.date_within(birthday, today.date(), 30, 'days'))
+                        if (birthday > today.date()):
+                            within = ( self.date_within(birthday, today.date(), 30, 'days'))
             if within == True:
                 upcomming_births[person.birthday].append(person.name)
             else:
