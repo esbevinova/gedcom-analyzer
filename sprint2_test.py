@@ -157,6 +157,19 @@ class StoryTest(unittest.TestCase):
         recent_births = classify.us35_recent_births()
         expect =  {'19 OCT 2019': ['Jeff /Crowley/']}
         self.assertEqual (recent_births, expect)
+        
+    def test_us36(self):
+        """Function that tests us36_recent_deaths()"""
+        recent_deaths = classify.us36_recent_deaths()
+        expect =  {'25 OCT 2019': ['Gomez /Addams/']}
+        self.assertEqual (recent_deaths, expect)
+
+    def test_us38(self):
+        """Function that tests us38_upcomming_birthdays"""
+        today = '25 DEC 2019'
+        upcomming_births = classify.us38_upcomming_birthdays(today)
+        expect = {'19 DEC 2009':['Mason'],'12 DEC 2014':['Reign'] ,'5 DEC 2015':['Saint /West/'],'15 JAN 2015':['Chicago /West/'],'16 DEC 1770':['Ludwig /Beethoven']}
+        self.assertEqual (upcomming_births, expect)
     
     def test_valid_date(self):
         """Function that tests valid_date()"""
