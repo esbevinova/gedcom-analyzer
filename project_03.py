@@ -836,6 +836,7 @@ class Classification():
         upcomming_births = defaultdict(list) 
         today= datetime.strptime(today, '%d %b %Y')
         d = today + timedelta(days = 30)
+        print(today, d)
         for person in self.people.values():
             within = False
             if (person.birthday == 'NA') or (person.birthday == None):
@@ -843,12 +844,12 @@ class Classification():
             elif valid_date(person.birthday) and person.alive:
                 birthdate=datetime.strptime(person.birthday, "%d %b %Y").date()
                 birthday = birthdate.replace(year=today.year)
-                if birthdate < today.date():
-                    within = ( self.date_within(birthday, today.date(), 30, 'days'))
-                elif (within == False) and (birthday > today.date()):
+                if (birthdate < today.date()) and (birthday < d.date()):
+                    within = ( self.date_within(d.date(), birthday, 30, 'days'))
+                elif (within == False) and (birthday < d.date()):
                     birthday = birthdate.replace(year=d.year)
                     if (birthday > today.date()):
-                        within = ( self.date_within(birthday, today.date(), 30, 'days'))
+                        within = ( self.date_within(d.date(), birthday, 30, 'days'))
             if within == True:
                 upcomming_births[person.birthday].append(person.name)
             else:
@@ -933,7 +934,7 @@ def main():
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
     classify.us36_recent_deaths_table()
-    today = '25 DEC 2019'
+    today = '25 JAN 2019'
     classify.us38_upcomming_birthdays_table(today)
     classify.us42_invalid_date_error()
        
