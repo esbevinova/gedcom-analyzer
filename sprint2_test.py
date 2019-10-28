@@ -174,7 +174,7 @@ class StoryTest(unittest.TestCase):
         """Function that tests us38_upcomming_birthdays"""
         today = '25 DEC 2019'
         upcomming_births = classify.us38_upcomming_birthdays(today)
-        expect = {'19 DEC 2009':['Mason'],'12 DEC 2014':['Reign'] ,'5 DEC 2015':['Saint /West/'],'15 JAN 2015':['Chicago /West/'],'16 DEC 1770':['Ludwig /Beethoven']}
+        expect = {'19 DEC 2009':['Mason'],'12 DEC 2014':['Reign'] ,'5 DEC 2015':['Saint /West/'],'16 DEC 1770':['Ludwig /Beethoven']}
         self.assertEqual (upcomming_births, expect)
         
 if __name__ == "__main__":
