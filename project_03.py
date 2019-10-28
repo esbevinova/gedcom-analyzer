@@ -698,7 +698,7 @@ class Classification():
                     continue
             else:
                 continue
-
+        
         return living_married   
     
     def us29_deceased_table(self):
