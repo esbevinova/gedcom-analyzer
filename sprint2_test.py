@@ -68,10 +68,10 @@ class StoryTest(unittest.TestCase):
     def test_us10(self):
         """Function that tests us10_marriage_after14() US10: parents must be at least 14 years old at the time of marriage""" 
         us10 = list(classify.us10_marriage_after14())
-        expect = ["ERROR: FAMILY: US10: ID: @F1@: wife's age is less than 14 years old at the time of marriage 8 JUL 1978 (line 457)",
-                  "ERROR: FAMILY: US10: ID: @F2@: wife's age is less than 14 years old at the time of marriage 24 APR 2020 (line 467)",
-                  "ERROR: FAMILY: US10: ID: @F3@: husband's age is less than 14 years old at the time of marriage 11 AUG 2016 (line 476)",
-                  "ERROR: FAMILY: US10: ID: @F4@: wife's age is less than 14 years old at the time of marriage 14 JUL 2006 (line 487)"]
+        expect = ["ERROR: FAMILY: US10: ID: @F1@: wife's age is less than 14 years old at the time of marriage 8 JUL 1978 (line 458)",
+                  "ERROR: FAMILY: US10: ID: @F2@: wife's age is less than 14 years old at the time of marriage 24 APR 2020 (line 468)",
+                  "ERROR: FAMILY: US10: ID: @F3@: husband's age is less than 14 years old at the time of marriage 11 AUG 2016 (line 477)",
+                  "ERROR: FAMILY: US10: ID: @F4@: wife's age is less than 14 years old at the time of marriage 14 JUL 2006 (line 488)"]
         self.assertEqual(us10, expect)
     
     def test_us12_parents_not_too_old(self):
@@ -86,7 +86,7 @@ class StoryTest(unittest.TestCase):
     def test_us14_multiple_siblings(self):
         """Funciton that tests us14_multiple_siblings() US14: Family should not have more than 5 siblings with the same birthday"""
         us14 = list(classify.us14_multiple_siblings())
-        expect = ['ERROR: FAMILY: US14: Family with ID @F14@ on line 557 has more than 5 siblings with the same birthday']
+        expect = ['ERROR: FAMILY: US14: Family with ID @F14@ on line 558 has more than 5 siblings with the same birthday']
         self.assertEqual(us14, expect)
     
     def test_us21_correct_gender(self):
