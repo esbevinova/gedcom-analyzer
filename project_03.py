@@ -607,11 +607,7 @@ class Classification():
                 wife_family = self.people[family.wife_id].child
                 children_pool = self.families[husb_family].children + self.families[wife_family].children
                 if family.husb_id in children_pool and family.wife_id in children_pool:
-                    yield 'ERROR: FAMILY: US18: Family with ID {} on line {} is a marriage between siblings'.format(family.i_d, family.i_d_line)
-               
-
-
-            
+                    yield 'ERROR: FAMILY: US18: Family with ID {} on line {} is a marriage between siblings'.format(family.i_d, family.i_d_line)           
 
     def us21_correct_gender(self):
         """Husband in family should be male and wife in family should be female"""
