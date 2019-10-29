@@ -622,7 +622,7 @@ class Classification():
             if female_gender == 'F' or female_gender == 'NA': #check if the gender is female or undified
                 continue
             else:
-                yield "ERROR: US21: wife ID {}: on line# {}, has incrorrect gender {}".format(family.wife_id, self.people[family.wife_id].gender_line, self.people[family.wife_id].gender)
+                yield "ERROR: US21: wife ID {}: on line# {}, has incorrect gender {}".format(family.wife_id, self.people[family.wife_id].gender_line, self.people[family.wife_id].gender)
 
         for family in self.families.values():
 
@@ -630,7 +630,7 @@ class Classification():
             if male_gender == 'M' or male_gender == 'NA': ##check if the gender is male or undified
                 continue
             else:
-                yield "ERROR: US21 husband ID {}: on line# ({}), has incrorrect gender {}".format(family.husb_id, self.people[family.husb_id].gender_line, self.people[family.husb_id].gender)
+                yield "ERROR: US21 husband ID {}: on line# ({}), has incorrect gender {}".format(family.husb_id, self.people[family.husb_id].gender_line, self.people[family.husb_id].gender)
     
     def us23_uniquename_and_birthdate(self):
         'No more than one individual with the same name and birth date should appear in a GEDCOM file'
@@ -836,7 +836,7 @@ class Classification():
         upcomming_births = defaultdict(list) 
         today= datetime.strptime(today, '%d %b %Y')
         d = today + timedelta(days = 30)
-        print(today, d)
+        #print(today, d)
         for person in self.people.values():
             within = False
             if (person.birthday == 'NA') or (person.birthday == None):
@@ -934,7 +934,7 @@ def main():
     classify.us32_multiple_births_table()
     classify.us35_recent_births_table()
     classify.us36_recent_deaths_table()
-    today = '25 JAN 2019'
+    today = datetime.today().strftime('%d %b %Y')
     classify.us38_upcomming_birthdays_table(today)
     classify.us42_invalid_date_error()
        

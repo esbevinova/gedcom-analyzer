@@ -106,7 +106,7 @@ class StoryTest(unittest.TestCase):
     def test_us21_correct_gender(self):
         'function that tests us21_correct_gende(),Husband in family should be male and wife in family should be female'
         us21 = list(classify.us21_correct_gender())
-        expect = ['ERROR: US21: wife ID @I5@: on line# 61, has incrorrect gender M', 'ERROR: US21 husband ID @I4@: on line# (51), has incrorrect gender F']
+        expect = ['ERROR: US21: wife ID @I5@: on line# 61, has incorrect gender M', 'ERROR: US21 husband ID @I4@: on line# (51), has incorrect gender F']
         self.assertEqual(us21, expect)
     
     def test_us23_uniquename_and_birthdate(self):
