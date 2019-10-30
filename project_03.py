@@ -587,6 +587,12 @@ class Classification():
                     if len(same_birthdays[child_found.birthday]) > 5:
                         yield 'ERROR: FAMILY: US14: Family with ID {} on line {} has more than 5 siblings with the same birthday'.format(family.i_d, family.i_d_line)
 
+    def us15_fewer_than_15_siblings(self):
+        """User story 15: Returns error if there is more than 15 children in a family"""
+        for family in self.families.values():
+            if len(family.children) >= 15:
+                yield 'ERROR: FAMILY: US15: Family with ID {} on line {} has 15 or more children'.format(family.i_d, family.i_d_line)
+
     def us17_no_marriage_to_childeren(self):
         """User story 17. Checks for parents not to be married to the children"""
         for person in self.people.values():
@@ -763,6 +769,32 @@ class Classification():
         
         print("\n\nUS32: People sharing birthdays")
         print(pt)
+
+    def us33_list_orphans(self):
+        """User story 33: function lists all orphaned children: 
+        both parents are dead and the child is under 18 years old"""
+        orphans = list()
+        for person in self.people.values():
+            if person.age == 'NA' or int(person.age) >= 18:
+                continue
+            else:
+                if person.child != 'NA':
+                    mother = self.families[person.child].wife_id
+                    father = self.families[person.child].husb_id
+                    if self.people[mother].alive == False and self.people[father].alive == False:
+                        orphans.append([person.i_d, person.name])
+                    else:
+                        continue
+        return orphans
+
+    def us33_list_orphans_table(self):
+        """User story 33: Function prints pretty table for list of orphans"""
+        pt = PrettyTable()
+        pt.field_names = ['ID', 'Name']
+        for i_d, name in self. us33_list_orphans():
+            pt.add_row([i_d, name])
+        print('US33: List orphans')
+        print(pt)
     
     def date_within(self, dt1, dt2, limit, units):
         """return True if dt1 and dt2 are within units where:
@@ -918,6 +950,8 @@ def main():
         print(err)
     for err in classify.us14_multiple_siblings():
         print(err)
+    for err in classify.us15_fewer_than_15_siblings():
+        print(err)
     for err in classify.us17_no_marriage_to_childeren():
         print(err)
     for err in classify.us18_siblings_marriage():
@@ -932,6 +966,7 @@ def main():
     classify.us30_living_married_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
+    classify.us33_list_orphans_table()
     classify.us35_recent_births_table()
     classify.us36_recent_deaths_table()
     today = datetime.today().strftime('%d %b %Y')
