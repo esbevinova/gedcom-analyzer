@@ -499,6 +499,41 @@ class Classification():
                 else:
                     continue
     
+    def us08_birth_before_marriage_of_parents(self):
+        'Children should be born after marriage of parents (and not more than 9 months after their divorce)'
+
+        for family in self.families.values():
+            if family.married == 'NA' or family.married == None:
+                continue
+            else:
+                marriage_date = self.date_format(family.married)
+                for child in family.children:
+                    child_birth = self.date_format(self.people[child].birthday)
+
+                    if child_birth == 'NA' or child_birth == None:
+                        continue
+                    else:
+                        if child_birth < marriage_date:
+                            yield'ERROR:US08: child {} birthday {}: occure before marriage {} on (line {})'.format(self.people[child].i_d, self.people[child].birthday, family.married, self.people[child].birthday_line)
+                        else:
+                            continue
+
+        for family in self.families.values():
+            if family.divorced == 'NA' or family.divorced == None:
+                continue
+            else:
+                divorce_date = self.date_format(family.divorced)
+                for child in family.children:
+                    child_birth = self.date_format(self.people[child].birthday)
+                    if child_birth == 'NA' or child_birth == None:
+                        continue
+                    elif child_birth < divorce_date:
+                        continue
+                    elif self.date_within(divorce_date, child_birth, 9, 'months'): #check if the birthday occure before divorce or  within 9 months after divorce
+                        continue
+                    else:
+                        yield'ERROR:US08: child {} birthday {}: occure after 9 months of parents divorced date {} on (line {})'.format(self.people[child].i_d, self.people[child].birthday,family.divorced, self.people[child].birthday_line)
+    
     def us10_marriage_after14(self):
         """Checks if marriage took place at least 14 years after birth of both spouses (parents must be at least 14 years old)"""
         """for family in self.families.values():
@@ -943,6 +978,8 @@ def main():
     for err in classify.us06_divorce_before_death():
         print(err)
     for err in classify.us07_over150():
+        print(err)
+    for err in classify.us08_birth_before_marriage_of_parents():
         print(err)
     for err in classify.us10_marriage_after14():
         print(err)
