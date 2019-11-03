@@ -3,4 +3,5 @@ A custom command-line program that discovers errors and anomalies in GEDCOM gene
 
 
 
-[![Build Status](https://travis-ci.org/esbevinova/gedcom-analyzer.svg?branch=Sprint2)](https://travis-ci.org/esbevinova/gedcom-analyzer)
+[![Build Status](https://travis-ci.org/esbevinova/gedcom-analyzer.svg?branch=master)](https://travis-ci.org/esbevinova/gedcom-analyzer)
+
