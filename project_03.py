@@ -628,6 +628,30 @@ class Classification():
             if len(family.children) >= 15:
                 yield 'ERROR: FAMILY: US15: Family with ID {} on line {} has 15 or more children'.format(family.i_d, family.i_d_line)
 
+    def us16_male_last_names(self):
+        """All male members of a family should have the same last name"""
+        last_names = defaultdict(int)
+        for family in self.families.values():
+            full_name = (self.people[family.husb_id].name.replace('/', '')).split(" ")
+            if len(full_name) < 2:
+                continue
+            else:
+                last_name = full_name[1]
+                last_names[last_name] += 1
+            for child in family.children:
+                child_full_name = (self.people[child].name.replace('/','')).split(" ")
+                if len(child_full_name) < 2:
+                    continue
+                else:
+                    child_last_name = child_full_name[1]
+                    last_names[child_last_name] += 1
+            if len(last_names) <= 1:
+                last_names.clear()
+                continue
+            else:
+                yield "ERROR: US16: Last names of male members of the family are not the same (Family Line #{})".format(family.i_d_line)
+            last_names.clear()
+
     def us17_no_marriage_to_childeren(self):
         """User story 17. Checks for parents not to be married to the children"""
         for person in self.people.values():
@@ -649,10 +673,6 @@ class Classification():
                 children_pool = self.families[husb_family].children + self.families[wife_family].children
                 if family.husb_id in children_pool and family.wife_id in children_pool:
                     yield 'ERROR: FAMILY: US18: Family with ID {} on line {} is a marriage between siblings'.format(family.i_d, family.i_d_line)
-               
-
-
-            
 
     def us21_correct_gender(self):
         """Husband in family should be male and wife in family should be female"""
@@ -897,7 +917,71 @@ class Classification():
         
         print("\n\nUS36: People who died in the last 30 days")
         print(pt)
-        
+    
+    def us37_list_recent_survivors(self):
+        """List all living spouses and descendanta of people in a GEDCOM files who died in the last 30 days"""
+        all_living_relatives = defaultdict(list)
+        all_living_children = list()
+
+        for person in self.people.values():
+            if person.alive:
+                continue
+            else:
+                if person.spouse != 'NA' and valid_date(person.death):
+                    persons_deathday = self.date_format(person.death)
+                    if (persons_deathday < datetime.today().date()):
+                        if self.date_within(persons_deathday, datetime.today().date(), 30, "days"):
+                            formatted_name_of_deceased = person.name.replace('/','')
+                            all_living_relatives[person.name].append(formatted_name_of_deceased)
+                            if person.i_d == self.families[person.spouse].wife_id:
+                                if self.people[self.families[person.spouse].husb_id].alive:
+                                    formatted_name_of_spouse = self.people[self.families[person.spouse].husb_id].name.replace('/','')
+                                    all_living_relatives[person.name].append(formatted_name_of_spouse)
+                                else:
+                                    all_living_relatives[person.name].append([])
+                                for child in self.families[person.spouse].children:
+                                    if self.people[child].alive == False:
+                                        continue
+                                    else: 
+                                        unformatted_child_name = self.people[child].name
+                                        formatted_child_name = unformatted_child_name.replace('/', '')
+                                        all_living_children.append(formatted_child_name)
+
+                                all_living_relatives[person.name].append(all_living_children)
+                                all_living_children = []
+
+                            elif person.i_d == self.families[person.spouse].husb_id:
+                                if self.people[self.families[person.spouse].wife_id].alive:
+                                    formatted_name_of_spouse = self.people[self.families[person.spouse].wife_id].name.replace('/','')
+                                    all_living_relatives[person.name].append(formatted_name_of_spouse)
+                                else:
+                                    all_living_relatives[person.name].append([])
+
+                                for child in self.families[person.spouse].children:
+                                    if self.people[child].alive == False:
+                                        continue
+                                    else: 
+                                        unformatted_child_name = self.people[child].name
+                                        formatted_child_name = unformatted_child_name.replace('/', '')
+                                        all_living_children.append(formatted_child_name)
+
+                                all_living_relatives[person.name].append(all_living_children)
+                                all_living_children = []
+                            else:
+                                continue    
+                    else:
+                        continue            
+        return all_living_relatives
+
+    def us37_list_recent_survivors_table(self):
+        """User Story 37: Function prints list_recent_survivors() table"""
+        pt = PrettyTable()
+        pt.field_names = ['Deceased', 'Living Spouse', 'Living Descendants']
+        for values in self.us37_list_recent_survivors().values():
+            pt.add_row(values)    
+        print("\n\nUS37: List of people who died in the last 30 days and their Living Spouses and Descendants")
+        print(pt)
+
     def us38_upcomming_birthdays(self, today):
         """User Story 38: List all the people in a GEDCOM file who's birthdays is in the upcomming 30 days"""
         upcomming_births = defaultdict(list) 
@@ -997,7 +1081,9 @@ def main():
         print(err)
     for err in classify.us23_uniquename_and_birthdate():
         print(err)
-        
+    for err in classify.us16_male_last_names():
+        print(err)
+    classify.us42_invalid_date_error()
     classify.us27_ages_table()
     classify.us29_deceased_table()
     classify.us30_living_married_table()
@@ -1006,9 +1092,9 @@ def main():
     classify.us33_list_orphans_table()
     classify.us35_recent_births_table()
     classify.us36_recent_deaths_table()
+    classify.us37_list_recent_survivors_table()
     today = datetime.today().strftime('%d %b %Y')
     classify.us38_upcomming_birthdays_table(today)
-    classify.us42_invalid_date_error()
        
 if __name__ == '__main__':
     main()
