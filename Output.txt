@@ -1,0 +1,180 @@
++-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
+|   ID  |          NAME         | GENDER |   BIRTHDAY  | AGE | ALIVE |    DEATH    | CHILD | SPOUSE |
++-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
+|  @I1@ |     Kris /Jenner/     |   F    |  5 NOV 2020 |  -2 |  True |     None    |   NA  |  @F2@  |
+|  @I2@ |  Robert /Kardashian/  |   M    | 22 FEB 1944 |  -1 | False | 30 SEP 1943 |   NA  |  @F1@  |
+|  @I3@ |    Caitlyn /Jenner/   |   NA   | 28 OCT 1949 |  71 | False | 30 NOV 2020 |   NA  |  @F2@  |
+|  @I4@ |    Rob /Kardashian/   |   M    | 17 SEP 2019 |  0  |  True |     None    |  @F1@ |  @F3@  |
+|  @I5@ | Kourtney /Kardashian/ |   F    | 18 SEP 2019 |  0  |  True |     None    |  @F1@ |  @F4@  |
+|  @I6@ |    Kim /Kardashian/   |   F    | 21 OCT 1980 |  38 |  True |     None    |  @F1@ |  @F7@  |
+|  @I7@ |   Khloe /Kardashian/  |   F    | 27 JUN 1984 |  35 |  True |     None    |  @F1@ |  @F9@  |
+|  @I8@ |     Kylie /Jenner/    |   F    | 10 AUG 1997 |  22 |  True |     None    |  @F2@ | @F10@  |
+|  @I9@ |    Kendall /Jenner/   |   F    |  3 NOV 1995 |  23 |  True |     None    |  @F2@ |   NA   |
+| @I10@ |      Blac /Chyna/     |   F    | 20 JUN 1980 |  39 |  True |     None    |   NA  |  @F3@  |
+| @I11@ |   Dream /Kardashian/  |   F    | 10 NOV 2016 |  2  |  True |     None    |  @F3@ |   NA   |
+| @I12@ |     Scott /Disick/    |   M    | 26 MAY 1983 |  36 |  True |     None    |   NA  |  @F4@  |
+| @I13@ |        Penelope       |   F    | 23 JUL 2012 |  7  |  True |     None    |  @F4@ |   NA   |
+| @I14@ |         Mason         |   M    | 19 DEC 2009 |  9  |  True |     None    |  @F4@ |   NA   |
+| @I15@ |         Reign         |   M    | 12 DEC 2014 |  4  |  True |     None    |  @F4@ |   NA   |
+| @I16@ |      Kaney /West/     |   M    |  8 JUN 1977 |  42 |  True |     None    |   NA  |  @F5@  |
+| @I17@ |      North /West/     |   F    | 15 JUN 2013 |  6  |  True |     None    |  @F5@ |   NA   |
+| @I18@ |      Saint /West/     |   M    |  5 DEC 2015 |  3  |  True |     None    |  @F5@ |   NA   |
+| @I19@ |     Chicago /West/    |   F    | 15 JAN 2015 |  4  |  True |     None    |  @F5@ |   NA   |
+| @I20@ |   Tristen /Thompson/  |   M    | 13 MAR 1991 |  28 |  True |     None    |   NA  |  @F8@  |
+| @I21@ |    True /Thompson/    |   F    | 12 APR 2018 |  1  |  True |     None    |  @F8@ |   NA   |
+| @I22@ |     Travis /Scott/    |   M    |     None    |  NA |  True |     None    |   NA  | @F10@  |
+| @I23@ |     Stormi /Scott/    |   F    | 25 FEB 2018 |  1  |  True |     None    | @F10@ |   NA   |
+| @I24@ |     Damon /Thomas/    |   M    | 12 FEB 1980 |  39 |  True |     None    |   NA  |  @F6@  |
+| @I25@ |    Kris /Humphries/   |   M    |  6 FEB 1985 |  34 |  True |     None    |   NA  |  @F7@  |
+| @I26@ |      Psalm /West/     |   M    | 10 MAY 2019 |  0  |  True |     None    |  @F5@ |   NA   |
+| @I27@ |      Lamar /Odom/     |   M    |  6 NOV 1979 |  39 |  True |     None    |   NA  |  @F9@  |
+|  @28@ |     Smith /Joseph     |   M    |  6 NOV 1950 |  68 |  True |     None    |   NA  |   NA   |
+|  @29@ |    Sasquatch /Kyle    |   M    |  6 NOV 1950 |  68 |  True |     None    |   NA  |   NA   |
+|  @30@ |     Birch /Cynthia    |   F    |  6 NOV 1979 |  39 |  True |     None    |   NA  |   NA   |
+|  @31@ |   Ludwig /Beethoven   |   M    | 16 DEC 1770 | 248 |  True |     None    |   NA  |   NA   |
+|  @32@ |      Johann /Bach     |   M    | 31 MAR 1685 | 202 | False | 31 MAR 1887 |   NA  |   NA   |
+| @I33@ |     Jeny /Jenner/     |   F    |  5 NOV 1950 |  49 | False | 30 SEP 2000 |   NA  | @F12@  |
+| @I34@ |  George /Kardashian/  |   M    | 22 FEB 1944 |  75 |  True |     None    |   NA  | @F12@  |
+| @I35@ |      Yan /Jenner/     |   F    |  5 NOV 1950 |  49 | False | 12 JUN 2000 |   NA  | @F13@  |
+| @I36@ |   Chris /Kardashian/  |   M    | 22 FEB 1940 |  79 |  True |     None    |   NA  |   NA   |
+| @I37@ |     Chris /Megan/     |   M    |     None    |  NA |  True |     None    |   NA  | @F13@  |
++-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
++-------+-------------+-------------+------------+---------------------+---------+-----------------------+--------------------------------------+
+|   ID  |   MARRIED   |   DIVORCED  | HUSBAND ID |     HUSBAND NAME    | WIFE ID |       WIFE NAME       |               CHILDREN
+     |
++-------+-------------+-------------+------------+---------------------+---------+-----------------------+--------------------------------------+
+|  @F1@ |  8 JUL 1978 |     None    |    @I2@    | Robert /Kardashian/ |   @I1@  |     Kris /Jenner/     |   ['@I4@', '@I5@', '@I6@', '@I7@']   |
+|  @F2@ | 24 APR 2020 | 23 MAR 2021 |    @I3@    |   Caitlyn /Jenner/  |   @I1@  |     Kris /Jenner/     |           ['@I8@', '@I9@']      
+     |
+|  @F3@ | 11 AUG 2016 |  4 OCT 2017 |    @I4@    |   Rob /Kardashian/  |  @I10@  |      Blac /Chyna/     |              ['@I11@']
+     |
+|  @F4@ | 14 JUL 2006 | 13 DEC 2005 |   @I12@    |    Scott /Disick/   |   @I5@  | Kourtney /Kardashian/ |     ['@I13@', '@I14@', '@I15@'] 
+     |
+|  @F5@ | 24 MAY 2014 |     None    |   @I16@    |     Kaney /West/    |   @I6@  |    Kim /Kardashian/   | ['@I17@', '@I18@', '@I19@', '@I26@'] |
+|  @F6@ |  8 MAY 2001 | 16 MAY 2003 |   @I24@    |    Damon /Thomas/   |   @I6@  |    Kim /Kardashian/   |                  []
+     |
+|  @F7@ | 20 AUG 2011 | 17 MAR 2013 |   @I25@    |   Kris /Humphries/  |   @I6@  |    Kim /Kardashian/   |                  []
+     |
+|  @F8@ | 29 MAR 2016 | 21 FEB 2019 |   @I20@    |  Tristen /Thompson/ |   @I7@  |   Khloe /Kardashian/  |              ['@I21@']
+     |
+|  @F9@ | 17 JUL 2009 | 10 MAR 2016 |   @I27@    |     Lamar /Odom/    |   @I7@  |   Khloe /Kardashian/  |                  []
+     |
+| @F10@ |     None    |     None    |   @I22@    |    Travis /Scott/   |   @I8@  |     Kylie /Jenner/    |              ['@I23@']
+     |
+| @F12@ |  8 JUL 1990 | 10 MAR 2016 |   @I34@    | George /Kardashian/ |  @I33@  |     Jeny /Jenner/     |                  []
+     |
+| @F13@ |  8 JUL 2019 |     None    |   @I36@    |  Chris /Kardashian/ |  @I35@  |      Yan /Jenner/     |                  []
+     |
++-------+-------------+-------------+------------+---------------------+---------+-----------------------+--------------------------------------+
+ERROR: INDIVIDUAL: US01: ID: @I1@ : Birthday 5 NOV 2020: on line (22): Occurs in the future
+ERROR: INDIVIDUAL: US01: ID: @I3@ : Death 30 NOV 2020: on line(44) Occurs in the future
+ERROR: FAMILY: US01: ID: @F2@ : Marriage date 24 APR 2020 on line (357) Occurs in the future
+ERROR: FAMILY: US01: ID: @F2@ : Divorce date 23 MAR 2021 on line (359) Occurs in the future
+ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 1978-07-08 on line 347
+ERROR: FAMILY: US02: ID: @I1@ - Wife's birth date 2020-11-05 on line 22 occurs after her marriage date 2020-04-24 on line 357
+ERROR: FAMILY: US02: ID: @I4@ - Husband's birth date 2019-09-17 on line 53 occurs after his marriage date 2016-08-11 on line 366
+ERROR: FAMILY: US02: ID: @I5@ - Wife's birth date 2019-09-18 on line 63 occurs after her marriage date 2006-07-14 on line 377
+ERROR: INDIVIDUAL: US03: @I2@: Died on 30 SEP 1943: line (34): before born on 22 FEB 1944
+ERROR: FAMILY: US04: @F4@: Divorced on 13 DEC 2005 (line 379) before married on 14 JUL 2006 (line 377)
+ERROR: FAMILY: US05: @F1@: Married on 1978-07-08 (line 347) after Death of Husband on 1943-09-30 (line 34)
+ERROR: FAMILY: US05: @F13@: Married on 2019-07-08 (line 446) after Death of Wife on 2000-06-12 (line 319)
+ERROR: FAMILY: US06: @F2@: Divorced on 2021-03-23 (line 359) after Death of Husband on 2020-11-30 (line 44)
+ERROR: FAMILY: US06: @F12@: Divorced on 2016-03-10 (line 438) after Death of Wife on 2000-09-30 (line 298)
+ERROR: INDIVIDUAL: US07: @31@ More than 150 years old: Birthday 16 DEC 1770 (line 281)
+ERROR: INDIVIDUAL: US07: @32@ More than 150 years old at death: Birthday 31 MAR 1685 (line 286), Death date 31 MAR 1887 (line 288)
+ERROR: FAMILY: US10: ID: @F1@: wife's age is less than 14 years old at the time of marriage 8 JUL 1978 (line 347)
+ERROR: FAMILY: US10: ID: @F2@: wife's age is less than 14 years old at the time of marriage 24 APR 2020 (line 357)
+ERROR: FAMILY: US10: ID: @F3@: husband's age is less than 14 years old at the time of marriage 11 AUG 2016 (line 366)
+ERROR: FAMILY: US10: ID: @F4@: wife's age is less than 14 years old at the time of marriage 14 JUL 2006 (line 377)
+us27: Ages of individuals
++-------+-----+
+|   ID  | AGE |
++-------+-----+
+|  @I3@ |  71 |
+|  @I4@ |  0  |
+|  @I5@ |  0  |
+|  @I6@ |  38 |
+|  @I7@ |  35 |
+|  @I8@ |  22 |
+|  @I9@ |  23 |
+| @I10@ |  39 |
+| @I11@ |  2  |
+| @I12@ |  36 |
+| @I13@ |  7  |
+| @I14@ |  9  |
+| @I15@ |  4  |
+| @I16@ |  42 |
+| @I17@ |  6  |
+| @I18@ |  3  |
+| @I19@ |  4  |
+| @I20@ |  28 |
+| @I21@ |  1  |
+| @I23@ |  1  |
+| @I24@ |  39 |
+| @I25@ |  34 |
+| @I26@ |  0  |
+| @I27@ |  39 |
+|  @28@ |  68 |
+|  @29@ |  68 |
+|  @30@ |  39 |
+|  @31@ | 248 |
+|  @32@ | 202 |
+| @I33@ |  49 |
+| @I34@ |  75 |
+| @I35@ |  49 |
+| @I36@ |  79 |
++-------+-----+
+
+US29: Individuals deceased
++---------------------+-------------+
+|         Name        |  Death date |
++---------------------+-------------+
+| Robert /Kardashian/ | 30 SEP 1943 |
+|     Johann /Bach    | 31 MAR 1887 |
+|    Jeny /Jenner/    | 30 SEP 2000 |
+|     Yan /Jenner/    | 12 JUN 2000 |
++---------------------+-------------+
+
+US30: Living married
++-------+------------------+
+|   ID  |       Name       |
++-------+------------------+
+|  @I1@ |  Kris /Jenner/   |
+|  @I6@ | Kim /Kardashian/ |
+| @I16@ |   Kaney /West/   |
+|  @I8@ |  Kylie /Jenner/  |
+| @I22@ |  Travis /Scott/  |
++-------+------------------+
+
+
+US31: Individuals over 30 living single
++-------+--------------------+
+|   ID  |        Name        |
++-------+--------------------+
+|  @28@ |   Smith /Joseph    |
+|  @29@ |  Sasquatch /Kyle   |
+|  @30@ |   Birch /Cynthia   |
+|  @31@ | Ludwig /Beethoven  |
+| @I36@ | Chris /Kardashian/ |
++-------+--------------------+
+
+
+US32: People sharing birthdays
++-------------+------------------------------------------------+
+|  Birthdate  |                     People                     |
++-------------+------------------------------------------------+
+| 22 FEB 1944 | ['Robert /Kardashian/', 'George /Kardashian/'] |
+|  6 NOV 1979 |       ['Lamar /Odom/', 'Birch /Cynthia']       |
+|  6 NOV 1950 |      ['Smith /Joseph', 'Sasquatch /Kyle']      |
+|  5 NOV 1950 |       ['Jeny /Jenner/', 'Yan /Jenner/']        |
++-------------+------------------------------------------------+
+
+
+US35: People who were born in the last 30 days
++-------------+---------------------------+
+|  Birthdate  |           People          |
++-------------+---------------------------+
+| 17 SEP 2019 |    ['Rob /Kardashian/']   |
+| 18 SEP 2019 | ['Kourtney /Kardashian/'] |
++-------------+---------------------------+
+Error: US42: 31 FEB 1940 is an invalid date
