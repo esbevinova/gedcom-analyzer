@@ -6,6 +6,7 @@ from project_03 import valid_date
 classify = Classification('./test_results.ged')
 nadia_sprint3_test = Classification('./nadia_sprint3_test.ged')
 katya_sprint4_test = Classification('./katya_sprint4_test.ged')
+maram_sprint4_test = Classification('./maram_sprint4_test.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -136,6 +137,12 @@ class StoryTest(unittest.TestCase):
         us23 = list(classify.us23_uniquename_and_birthdate())
         expect = ['ERROR: US23 Individual name Johann /Bach and birthday 31 MAR 1685: on name_line# (290) , birth_line# (293), already exist']
         self.assertEqual(us23,expect)
+    
+    def test_us25_unique_first_names_in_families(self):
+        'No more than one child with the same name and birth date should appear in a family'
+        us25 = list(maram_sprint4_test.us25_unique_first_names_in_families())
+        expect = ['ERROR: US25: Child name Gene /Belcher/ and birthday 1 NOV 1994 with ID @I56@ on family (@F16@) already exist in the family']
+        self.assertEqual(us25, expect)
 
     def test_us27(self):
         """Function that tests us27_individual_ages()"""

@@ -705,6 +705,28 @@ class Classification():
             else:
                 continue
 
+    def us25_unique_first_names_in_families(self):
+        """No more than one child with the same name and birth date should appear in a family"""
+
+        for family in self.families.values():
+            if len(family.children) <=1:
+                continue
+            else:
+                unique_children = dict()
+                for child in family.children:
+                    if self.people[child].birthday == 'NA' or self.people[child].birthday == None or valid_date(self.people[child].birthday)== False:
+                        continue 
+                    else:
+                        child_name = self.people[child].name
+                        child_birthday= self.people[child].birthday 
+                        
+                        if child_name not in unique_children:
+                            unique_children[child_name] = child_birthday
+                        elif child_name in unique_children and child_birthday == unique_children[child_name]:
+                            yield 'ERROR: US25: Child name {} and birthday {} with ID {} on family ({}) already exist in the family'.format(child_name, child_birthday, self.people[child].i_d, family.i_d)
+                        else:
+                            continue
+
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
         for person in self.people.values():
@@ -1080,6 +1102,8 @@ def main():
     for err in classify.us21_correct_gender():
         print(err)
     for err in classify.us23_uniquename_and_birthdate():
+        print(err)
+    for err in classify.us25_unique_first_names_in_families():
         print(err)
     for err in classify.us16_male_last_names():
         print(err)
