@@ -3,6 +3,7 @@ from datetime import date
 from datetime import datetime, timedelta
 from collections import defaultdict
 import datetime as dt
+import operator
 
 invalid_date=[]
 
@@ -743,6 +744,29 @@ class Classification():
             pt.add_row([i_d, age])
         print('us27: Ages of individuals')
         print(pt)
+        
+    def us28_siblings_by_age(self):
+        """User story 28: function that returns a siblings in families by decreasing age"""
+        siblings = defaultdict(list)
+        for family in self.families.values():
+            children = defaultdict(int)
+            for person in self.people.values():
+                for child in family.children:
+                    if child == person.i_d:
+                        if person.age >= 0:
+                            children[child]= person.age
+            sorted_children = sorted(children.items(), key=operator.itemgetter(1), reverse=True)
+            siblings[family.i_d] = sorted_children
+        return siblings
+                      
+    def us28_siblings_by_age_table(self):
+        """User Story 28: Function prints us28_siblings_by_age table"""
+        pt = PrettyTable()
+        pt.field_names = ["Family", "Sorted Siblings by Age"]
+        for name, child in self.us28_siblings_by_age().items():
+            pt.add_row([name, child])
+        print("\nUS28: Sorted Siblings by Age")
+        print(pt)
     
     def us29_list_deceased(self):
         """"List all deceased individuals in a GEDCOM file"""
@@ -1039,6 +1063,47 @@ class Classification():
         print("\n\nUS38: People who's birthday is in the next 30 days")
         print(pt)
         
+    def us39_upcomming_anniversaries(self, today):
+        """User Story 39: List all the couples in a GEDCOM file who's anniversary is in the upcomming 30 days"""
+        upcomming_anniversaries = defaultdict(list) 
+        today= datetime.strptime(today, '%d %b %Y')
+        d = today + timedelta(days = 30)
+        family_i_d_husb = ""
+        family_i_d_wife = ""
+        for family in self.families.values():
+            within = False
+            for person in self.people.values():
+                if (family.husb_id == person.i_d and person.alive):
+                    family_i_d_husb = family.i_d
+                if (family.wife_id == person.i_d and person.alive):
+                    family_i_d_wife = family.i_d
+            if (family.married == 'NA') or (family.married == None):
+                continue
+            elif valid_date(family.married) and (family.divorced == None) and (family_i_d_husb == family_i_d_wife):
+                anniversary = datetime.strptime(family.married, "%d %b %Y").date()
+                anni = anniversary.replace(year=today.year)
+                if (anniversary < today.date()) and (anni < d.date()):
+                    within = ( self.date_within(d.date(), anni, 30, 'days'))
+                elif  (within == False) and (anni < d.date()):
+                    anni = anniversary.replace(year=d.year)
+                    if (anni > today.date()):
+                        within = ( self.date_within(d.date(), anni, 30, 'days'))
+            if within:
+                upcomming_anniversaries[family.married].append(family.husb_id)
+                upcomming_anniversaries[family.married].append(family.wife_id)
+            else:
+                continue
+        return upcomming_anniversaries
+    
+    def us39_upcomming_anniversaries_table(self, today):
+        """User Story: 39: Function prints us39_upcomming_anniversaries() table"""
+        pt = PrettyTable()
+        pt.field_names = ['Anniversary', 'Couple']
+        for dt, couple in self.us39_upcomming_anniversaries(today).items():
+            pt.add_row([dt,couple])
+        print("\n\nUS39: Families who's anniversary is in the next 30 days")
+        print(pt)
+        
     def us42_invalid_date_error(self):
         """User Story: 42: Function prints valid_date() Error"""
         for i in invalid_date:
@@ -1109,6 +1174,7 @@ def main():
         print(err)
     classify.us42_invalid_date_error()
     classify.us27_ages_table()
+    classify.us28_siblings_by_age_table()
     classify.us29_deceased_table()
     classify.us30_living_married_table()
     classify.us31_singles_table()
@@ -1119,6 +1185,7 @@ def main():
     classify.us37_list_recent_survivors_table()
     today = datetime.today().strftime('%d %b %Y')
     classify.us38_upcomming_birthdays_table(today)
+    classify.us39_upcomming_anniversaries_table(today)
        
 if __name__ == '__main__':
     main()
