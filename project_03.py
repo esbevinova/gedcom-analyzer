@@ -1075,8 +1075,10 @@ class Classification():
             for person in self.people.values():
                 if (family.husb_id == person.i_d and person.alive):
                     family_i_d_husb = family.i_d
+                    husb_name = person.name
                 if (family.wife_id == person.i_d and person.alive):
                     family_i_d_wife = family.i_d
+                    wife_name = person.name
             if (family.married == 'NA') or (family.married == None):
                 continue
             elif valid_date(family.married) and (family.divorced == None) and (family_i_d_husb == family_i_d_wife):
@@ -1089,8 +1091,8 @@ class Classification():
                     if (anni > today.date()):
                         within = ( self.date_within(d.date(), anni, 30, 'days'))
             if within:
-                upcomming_anniversaries[family.married].append(family.husb_id)
-                upcomming_anniversaries[family.married].append(family.wife_id)
+                upcomming_anniversaries[family.married].append(family.husb_name)
+                upcomming_anniversaries[family.married].append(family.wife_name)
             else:
                 continue
         return upcomming_anniversaries
