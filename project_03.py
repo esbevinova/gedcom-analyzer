@@ -1081,7 +1081,7 @@ class Classification():
                     wife_name = person.name
             if (family.married == 'NA') or (family.married == None):
                 continue
-            elif valid_date(family.married) and (family.divorced == None) and (family_i_d_husb == family_i_d_wife):
+            elif valid_date(family.married) and ((family.divorced == None) or (family.divorced == "NA")) and (family_i_d_husb == family_i_d_wife):
                 anniversary = datetime.strptime(family.married, "%d %b %Y").date()
                 anni = anniversary.replace(year=today.year)
                 if (anniversary < today.date()) and (anni < d.date()):
