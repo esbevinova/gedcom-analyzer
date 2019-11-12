@@ -7,6 +7,7 @@ classify = Classification('./test_results.ged')
 nadia_sprint3_test = Classification('./nadia_sprint3_test.ged')
 katya_sprint4_test = Classification('./katya_sprint4_test.ged')
 maram_sprint4_test = Classification('./maram_sprint4_test.ged')
+rucha_sprint4_test = Classification('./print_output.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -72,7 +73,7 @@ class StoryTest(unittest.TestCase):
         us08 = list(classify.us08_birth_before_marriage_of_parents())
         expect = ['ERROR:US08: child @I8@ birthday 10 AUG 1997: occure before marriage 24 APR 2020 on (line 96)',
                   'ERROR:US08: child @I9@ birthday 3 NOV 1995: occure before marriage 24 APR 2020 on (line 106)',
-                  'ERROR:US08: child @I17@ birthday 15 JUN 2013: occure before marriage 24 MAY 2014 on (line 172)',
+                  'ERROR:US08: child @I17@ birthday 15 JUN 2013: occure before marriage 24 NOV 2014 on (line 172)',
                   'ERROR:US08: child @I13@ birthday 23 JUL 2012: occure after 9 months of parents divorced date 13 DEC 2005 on (line 140)',
                   'ERROR:US08: child @I14@ birthday 19 DEC 2009: occure after 9 months of parents divorced date 13 DEC 2005 on (line 147)',
                   'ERROR:US08: child @I15@ birthday 12 DEC 2014: occure after 9 months of parents divorced date 13 DEC 2005 on (line 154)']
@@ -156,6 +157,12 @@ class StoryTest(unittest.TestCase):
                     ('@I42@', 28), ('@I43@', 28), ('@I44@', 28), ('@I45@', 28), ('@I46@', 0), ('@I47@', 104),
                     ('@I48@', 85), ('@I49@', 24), ('@I50@', 23),('@I51@', 68)]
         self.assertEqual (individual_ages, expect)
+        
+    def test_us28(self):
+        """Function that tests us28_siblings_by_age()"""
+        sorted_siblings = list(rucha_sprint4_test.us28_siblings_by_age().items())
+        expect = [('@F1@', [('@I6@', 39), ('@I7@', 35), ('@I4@', 0), ('@I5@', 0)]), ('@F2@', [('@I9@', 24), ('@I8@', 22)]), ('@F3@', [('@I11@', 3)]), ('@F4@', [('@I14@', 9), ('@I13@', 7), ('@I15@', 4)]), ('@F5@', [('@I17@', 6), ('@I19@', 4), ('@I18@', 3), ('@I26@', 0)]), ('@F6@', []), ('@F7@', []), ('@F8@', [('@I21@', 1)]), ('@F9@', []), ('@F10@', [('@I23@', 1)]), ('@F12@', []), ('@F13@', []), ('@F14@', [('@I40@', 28), ('@I41@', 28), ('@I42@', 28), ('@I43@', 28), ('@I44@', 28), ('@I45@', 28)]), ('@F15@', [('@I49@', 24), ('@I50@', 23)]), ('@F16@', [('@I55@', 25), ('@I64@', 25), ('@I54@', 23)]), ('@F17@', []), ('@F18@', []), ('@F19@', [('@I52@', 59), ('@I4@', 0)]), ('@F20@', [('@I52@', 59), ('@I4@', 0)]), ('@F21@', [('@I58@', 9), ('@I59@', 9)]), ('@F22@', [('@I3@', 71), ('@I16@', 42), ('@I6@', 39), ('@I10@', 39), ('@I12@', 36), ('@I7@', 35), ('@I9@', 24), ('@I8@', 22), ('@I14@', 9), ('@I13@', 7), ('@I15@', 4), ('@I11@', 3), ('@I4@', 0), ('@I5@', 0)]), ('@F23@', [('@I3@', 71), ('@I6@', 39), ('@I10@', 39), ('@I12@', 36), ('@I7@', 35), ('@I9@', 24), ('@I8@', 22), ('@I14@', 9), ('@I13@', 7), ('@I15@', 4), ('@I11@', 3), ('@I4@', 0), ('@I5@', 0)]), ('@F24@', [('@I63@', 39), ('@I62@', 29)])]
+        self.assertEqual (sorted_siblings, expect)
     
     def test_us29_list_deceased(self):
         'US29 test deceased individual'
@@ -224,6 +231,13 @@ class StoryTest(unittest.TestCase):
         upcomming_births = classify.us38_upcomming_birthdays(today)
         expect = {'12 FEB 1980':['Damon /Thomas/'],'6 FEB 1985':['Kris /Humphries/'] ,'22 FEB 1944':['George /Kardashian/'],'22 FEB 1940':['Chris /Kardashian/']}
         self.assertEqual (upcomming_births, expect)
+        
+    def test_us39(self):
+        """Function that tests us39_upcomming_anniversaries"""
+        today ="11 NOV 2019"
+        us39 = list(rucha_sprint4_test.us39_upcomming_anniversaries(today).items())
+        expect = [('24 NOV 2014', ['Kaney /West/', 'Kim /Kardashian/'])]
+        self.assertEqual (us39, expect)
         
 if __name__ == "__main__":
     unittest.main(verbosity=2)
