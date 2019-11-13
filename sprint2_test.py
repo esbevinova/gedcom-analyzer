@@ -8,6 +8,7 @@ nadia_sprint3_test = Classification('./nadia_sprint3_test.ged')
 katya_sprint4_test = Classification('./katya_sprint4_test.ged')
 maram_sprint4_test = Classification('./maram_sprint4_test.ged')
 rucha_sprint4_test = Classification('./print_output.ged')
+nadia_sprint4_test = Classification('./nadia_sprint4_test.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -102,6 +103,13 @@ class StoryTest(unittest.TestCase):
         us14 = list(classify.us14_multiple_siblings())
         expect = ['ERROR: FAMILY: US14: Family with ID @F14@ on line 558 has more than 5 siblings with the same birthday']
         self.assertEqual(us14, expect)
+
+    def test_us15_fewer_than_15_siblings(self):
+        """Function that tesdts user story 15: there sould nbe less that 15 siblings in a family"""
+        us15 = list(nadia_sprint4_test.us15_fewer_than_15_siblings())
+        expect = ['ERROR: FAMILY: US15: Family with ID @F22@ on line 356 has 15 or more children', 
+                'ERROR: FAMILY: US15: Family with ID @F23@ on line 375 has 15 or more children']
+        self.assertEqual(us15, expect)
     
     def test_us16_male_last_names(self):
         """Function that tests us16_male_last_names()"""
@@ -149,10 +157,10 @@ class StoryTest(unittest.TestCase):
         """Function that tests us27_individual_ages()"""
         individual_ages = list(classify.us27_individual_ages())
         expect =  [('@I3@', 71), ('@I4@', 0), ('@I5@', 0), ('@I6@', 39), ('@I7@', 35), ('@I8@', 22), ('@I9@', 24),
-                    ('@I10@', 39), ('@I11@', 2), ('@I12@', 36), ('@I13@', 7), ('@I14@', 9), ('@I15@', 4),
+                    ('@I10@', 39), ('@I11@', 3), ('@I12@', 36), ('@I13@', 7), ('@I14@', 9), ('@I15@', 4),
                     ('@I16@', 42), ('@I17@', 6), ('@I18@', 3), ('@I19@', 4), ('@I20@', 28), ('@I21@', 1),
-                    ('@I23@', 1), ('@I24@', 39), ('@I25@', 34), ('@I26@', 0), ('@I27@', 39), ('@28@', 68), 
-                    ('@29@', 68), ('@30@', 39), ('@31@', 248), ('@32@', 202), ('@33@', 334), ('@I33@', 49), ('@I34@', 75),
+                    ('@I23@', 1), ('@I24@', 39), ('@I25@', 34), ('@I26@', 0), ('@I27@', 40), ('@28@', 69), 
+                    ('@29@', 69), ('@30@', 40), ('@31@', 248), ('@32@', 202), ('@33@', 334), ('@I33@', 49), ('@I34@', 75),
                     ('@I35@', 49), ('@I36@', 79), ('@I38@', 47), ('@I39@', 58), ('@I40@', 28), ('@I41@', 28),
                     ('@I42@', 28), ('@I43@', 28), ('@I44@', 28), ('@I45@', 28), ('@I46@', 0), ('@I47@', 104),
                     ('@I48@', 85), ('@I49@', 24), ('@I50@', 23),('@I51@', 68)]
@@ -200,6 +208,12 @@ class StoryTest(unittest.TestCase):
                   '19 NOV 1990': ['Chris /Potter/', 'Jill /Potter/', 'James /Potter/', 'Harry /Potter/', 'Katya /Potter/', 'Shawn /Potter/']
                   }
         self.assertEqual (multiple_births, expect)
+
+    def test_us33_list_orphans(self):
+        """Function tests user story 33, which lists all orphaned children: both parents are dead and the child is under 18 years old"""
+        us33 = list(nadia_sprint4_test.us33_list_orphans())
+        expect = [['@I58@', 'Lily /Lanister/'], ['@I59@', 'Jeoffrey /Lanister/']]
+        self.assertEqual(us33, expect)
 
     def test_us35(self):
         """Function that tests us35_recent_births()"""
