@@ -5,6 +5,10 @@ from project_03 import valid_date
 
 classify = Classification('./test_results.ged')
 nadia_sprint3_test = Classification('./nadia_sprint3_test.ged')
+katya_sprint4_test = Classification('./katya_sprint4_test.ged')
+maram_sprint4_test = Classification('./maram_sprint4_test.ged')
+rucha_sprint4_test = Classification('./print_output.ged')
+nadia_sprint4_test = Classification('./nadia_sprint4_test.ged')
 
 class StoryTest(unittest.TestCase):
 
@@ -64,6 +68,17 @@ class StoryTest(unittest.TestCase):
                 'ERROR: INDIVIDUAL: US07: @32@ More than 150 years old at death: Birthday 31 MAR 1685 (line 286), Death date 31 MAR 1887 (line 288)',
                 'ERROR: INDIVIDUAL: US07: @33@ More than 150 years old: Birthday 31 MAR 1685 (line 293)']          
         self.assertEqual(us07, expect)
+
+    def test_us8(self):
+        """ """
+        us08 = list(classify.us08_birth_before_marriage_of_parents())
+        expect = ['ERROR:US08: child @I8@ birthday 10 AUG 1997: occure before marriage 24 APR 2020 on (line 96)',
+                  'ERROR:US08: child @I9@ birthday 3 NOV 1995: occure before marriage 24 APR 2020 on (line 106)',
+                  'ERROR:US08: child @I17@ birthday 15 JUN 2013: occure before marriage 24 NOV 2014 on (line 172)',
+                  'ERROR:US08: child @I13@ birthday 23 JUL 2012: occure after 9 months of parents divorced date 13 DEC 2005 on (line 140)',
+                  'ERROR:US08: child @I14@ birthday 19 DEC 2009: occure after 9 months of parents divorced date 13 DEC 2005 on (line 147)',
+                  'ERROR:US08: child @I15@ birthday 12 DEC 2014: occure after 9 months of parents divorced date 13 DEC 2005 on (line 154)']
+        self.assertEqual(us08, expect)
     
     def test_us10(self):
         """Function that tests us10_marriage_after14() US10: parents must be at least 14 years old at the time of marriage""" 
@@ -88,6 +103,23 @@ class StoryTest(unittest.TestCase):
         us14 = list(classify.us14_multiple_siblings())
         expect = ['ERROR: FAMILY: US14: Family with ID @F14@ on line 558 has more than 5 siblings with the same birthday']
         self.assertEqual(us14, expect)
+
+    def test_us15_fewer_than_15_siblings(self):
+        """Function that tesdts user story 15: there sould nbe less that 15 siblings in a family"""
+        us15 = list(nadia_sprint4_test.us15_fewer_than_15_siblings())
+        expect = ['ERROR: FAMILY: US15: Family with ID @F22@ on line 356 has 15 or more children', 
+                'ERROR: FAMILY: US15: Family with ID @F23@ on line 375 has 15 or more children']
+        self.assertEqual(us15, expect)
+    
+    def test_us16_male_last_names(self):
+        """Function that tests us16_male_last_names()"""
+        us16 = list(katya_sprint4_test.us16_male_last_names())
+        expect = ['ERROR: US16: Last names of male members of the family are not the same (Family Line #677)',
+                  'ERROR: US16: Last names of male members of the family are not the same (Family Line #686)',
+                  'ERROR: US16: Last names of male members of the family are not the same (Family Line #702)',
+                  'ERROR: US16: Last names of male members of the family are not the same (Family Line #721)',
+                  'ERROR: US16: Last names of male members of the family are not the same (Family Line #741)']
+        self.assertEqual(us16, expect)
 
     def test_us17_no_marriage_to_childeren(self):
         """Function tests user story 17 which returns an error for parents married to children"""
@@ -114,19 +146,31 @@ class StoryTest(unittest.TestCase):
         us23 = list(classify.us23_uniquename_and_birthdate())
         expect = ['ERROR: US23 Individual name Johann /Bach and birthday 31 MAR 1685: on name_line# (290) , birth_line# (293), already exist']
         self.assertEqual(us23,expect)
+    
+    def test_us25_unique_first_names_in_families(self):
+        'No more than one child with the same name and birth date should appear in a family'
+        us25 = list(maram_sprint4_test.us25_unique_first_names_in_families())
+        expect = ['ERROR: US25: Child name Gene /Belcher/ and birthday 1 NOV 1994 with ID @I56@ on family (@F16@) already exist in the family']
+        self.assertEqual(us25, expect)
 
     def test_us27(self):
         """Function that tests us27_individual_ages()"""
         individual_ages = list(classify.us27_individual_ages())
-        expect =  [('@I3@', 71), ('@I4@', 0), ('@I5@', 0), ('@I6@', 39), ('@I7@', 35), ('@I8@', 22), ('@I9@', 23),
-                    ('@I10@', 39), ('@I11@', 2), ('@I12@', 36), ('@I13@', 7), ('@I14@', 9), ('@I15@', 4),
+        expect =  [('@I3@', 71), ('@I4@', 0), ('@I5@', 0), ('@I6@', 39), ('@I7@', 35), ('@I8@', 22), ('@I9@', 24),
+                    ('@I10@', 39), ('@I11@', 3), ('@I12@', 36), ('@I13@', 7), ('@I14@', 9), ('@I15@', 4),
                     ('@I16@', 42), ('@I17@', 6), ('@I18@', 3), ('@I19@', 4), ('@I20@', 28), ('@I21@', 1),
-                    ('@I23@', 1), ('@I24@', 39), ('@I25@', 34), ('@I26@', 0), ('@I27@', 39), ('@28@', 68), 
-                    ('@29@', 68), ('@30@', 39), ('@31@', 248), ('@32@', 202), ('@33@', 334), ('@I33@', 49), ('@I34@', 75),
+                    ('@I23@', 1), ('@I24@', 39), ('@I25@', 34), ('@I26@', 0), ('@I27@', 40), ('@28@', 69), 
+                    ('@29@', 69), ('@30@', 40), ('@31@', 248), ('@32@', 202), ('@33@', 334), ('@I33@', 49), ('@I34@', 75),
                     ('@I35@', 49), ('@I36@', 79), ('@I38@', 47), ('@I39@', 58), ('@I40@', 28), ('@I41@', 28),
                     ('@I42@', 28), ('@I43@', 28), ('@I44@', 28), ('@I45@', 28), ('@I46@', 0), ('@I47@', 104),
-                    ('@I48@', 85), ('@I49@', 23), ('@I50@', 22),('@I51@', 68)]
+                    ('@I48@', 85), ('@I49@', 24), ('@I50@', 23),('@I51@', 68)]
         self.assertEqual (individual_ages, expect)
+        
+    def test_us28(self):
+        """Function that tests us28_siblings_by_age()"""
+        sorted_siblings = list(rucha_sprint4_test.us28_siblings_by_age().items())
+        expect = [('@F1@', [('@I6@', 39), ('@I7@', 35), ('@I4@', 0), ('@I5@', 0)]), ('@F2@', [('@I9@', 24), ('@I8@', 22)]), ('@F3@', [('@I11@', 3)]), ('@F4@', [('@I14@', 9), ('@I13@', 7), ('@I15@', 4)]), ('@F5@', [('@I17@', 6), ('@I19@', 4), ('@I18@', 3), ('@I26@', 0)]), ('@F6@', []), ('@F7@', []), ('@F8@', [('@I21@', 1)]), ('@F9@', []), ('@F10@', [('@I23@', 1)]), ('@F12@', []), ('@F13@', []), ('@F14@', [('@I40@', 28), ('@I41@', 28), ('@I42@', 28), ('@I43@', 28), ('@I44@', 28), ('@I45@', 28)]), ('@F15@', [('@I49@', 24), ('@I50@', 23)]), ('@F16@', [('@I55@', 25), ('@I64@', 25), ('@I54@', 23)]), ('@F17@', []), ('@F18@', []), ('@F19@', [('@I52@', 59), ('@I4@', 0)]), ('@F20@', [('@I52@', 59), ('@I4@', 0)]), ('@F21@', [('@I58@', 9), ('@I59@', 9)]), ('@F22@', [('@I3@', 71), ('@I16@', 42), ('@I6@', 39), ('@I10@', 39), ('@I12@', 36), ('@I7@', 35), ('@I9@', 24), ('@I8@', 22), ('@I14@', 9), ('@I13@', 7), ('@I15@', 4), ('@I11@', 3), ('@I4@', 0), ('@I5@', 0)]), ('@F23@', [('@I3@', 71), ('@I6@', 39), ('@I10@', 39), ('@I12@', 36), ('@I7@', 35), ('@I9@', 24), ('@I8@', 22), ('@I14@', 9), ('@I13@', 7), ('@I15@', 4), ('@I11@', 3), ('@I4@', 0), ('@I5@', 0)]), ('@F24@', [('@I63@', 39), ('@I62@', 29)])]
+        self.assertEqual (sorted_siblings, expect)
     
     def test_us29_list_deceased(self):
         'US29 test deceased individual'
@@ -165,6 +209,12 @@ class StoryTest(unittest.TestCase):
                   }
         self.assertEqual (multiple_births, expect)
 
+    def test_us33_list_orphans(self):
+        """Function tests user story 33, which lists all orphaned children: both parents are dead and the child is under 18 years old"""
+        us33 = list(nadia_sprint4_test.us33_list_orphans())
+        expect = [['@I58@', 'Lily /Lanister/'], ['@I59@', 'Jeoffrey /Lanister/']]
+        self.assertEqual(us33, expect)
+
     def test_us35(self):
         """Function that tests us35_recent_births()"""
         #classify = Classification('us35_us42.ged')
@@ -183,6 +233,11 @@ class StoryTest(unittest.TestCase):
         recent_deaths = classify.us36_recent_deaths()
         expect =  {'25 OCT 2019': ['Gomez /Addams/']}
         self.assertEqual (recent_deaths, expect)
+    
+    def test_us37_list_recent_survivors_table(self):
+        us37 = katya_sprint4_test.us37_list_recent_survivors()
+        expect = {'Molly /Weasley/': ['Molly Weasley', 'Arthur Weasley', ['Ron Weasley', 'Fred Johnson']]}
+        self.assertEqual(us37, expect)
 
     def test_us38(self):
         """Function that tests us38_upcomming_birthdays"""
@@ -191,5 +246,12 @@ class StoryTest(unittest.TestCase):
         expect = {'12 FEB 1980':['Damon /Thomas/'],'6 FEB 1985':['Kris /Humphries/'] ,'22 FEB 1944':['George /Kardashian/'],'22 FEB 1940':['Chris /Kardashian/']}
         self.assertEqual (upcomming_births, expect)
         
+    def test_us39(self):
+        """Function that tests us39_upcomming_anniversaries"""
+        today ="11 NOV 2019"
+        us39 = list(rucha_sprint4_test.us39_upcomming_anniversaries(today).items())
+        expect = [('24 NOV 2014', ['Kaney /West/', 'Kim /Kardashian/'])]
+        self.assertEqual (us39, expect)
+        
 if __name__ == "__main__":
-    unittest.main(exit=False, verbosity=2)
+    unittest.main(verbosity=2)

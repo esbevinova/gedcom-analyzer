@@ -3,6 +3,7 @@ from datetime import date
 from datetime import datetime, timedelta
 from collections import defaultdict
 import datetime as dt
+import operator
 
 invalid_date=[]
 
@@ -499,6 +500,41 @@ class Classification():
                 else:
                     continue
     
+    def us08_birth_before_marriage_of_parents(self):
+        'Children should be born after marriage of parents (and not more than 9 months after their divorce)'
+
+        for family in self.families.values():
+            if family.married == 'NA' or family.married == None:
+                continue
+            else:
+                marriage_date = self.date_format(family.married)
+                for child in family.children:
+                    child_birth = self.date_format(self.people[child].birthday)
+
+                    if child_birth == 'NA' or child_birth == None:
+                        continue
+                    else:
+                        if child_birth < marriage_date:
+                            yield'ERROR:US08: child {} birthday {}: occure before marriage {} on (line {})'.format(self.people[child].i_d, self.people[child].birthday, family.married, self.people[child].birthday_line)
+                        else:
+                            continue
+
+        for family in self.families.values():
+            if family.divorced == 'NA' or family.divorced == None:
+                continue
+            else:
+                divorce_date = self.date_format(family.divorced)
+                for child in family.children:
+                    child_birth = self.date_format(self.people[child].birthday)
+                    if child_birth == 'NA' or child_birth == None:
+                        continue
+                    elif child_birth < divorce_date:
+                        continue
+                    elif self.date_within(divorce_date, child_birth, 9, 'months'): #check if the birthday occure before divorce or  within 9 months after divorce
+                        continue
+                    else:
+                        yield'ERROR:US08: child {} birthday {}: occure after 9 months of parents divorced date {} on (line {})'.format(self.people[child].i_d, self.people[child].birthday,family.divorced, self.people[child].birthday_line)
+    
     def us10_marriage_after14(self):
         """Checks if marriage took place at least 14 years after birth of both spouses (parents must be at least 14 years old)"""
         """for family in self.families.values():
@@ -587,6 +623,36 @@ class Classification():
                     if len(same_birthdays[child_found.birthday]) > 5:
                         yield 'ERROR: FAMILY: US14: Family with ID {} on line {} has more than 5 siblings with the same birthday'.format(family.i_d, family.i_d_line)
 
+    def us15_fewer_than_15_siblings(self):
+        """User story 15: Returns error if there is more than 15 children in a family"""
+        for family in self.families.values():
+            if len(family.children) >= 15:
+                yield 'ERROR: FAMILY: US15: Family with ID {} on line {} has 15 or more children'.format(family.i_d, family.i_d_line)
+
+    def us16_male_last_names(self):
+        """All male members of a family should have the same last name"""
+        last_names = defaultdict(int)
+        for family in self.families.values():
+            full_name = (self.people[family.husb_id].name.replace('/', '')).split(" ")
+            if len(full_name) < 2:
+                continue
+            else:
+                last_name = full_name[1]
+                last_names[last_name] += 1
+            for child in family.children:
+                child_full_name = (self.people[child].name.replace('/','')).split(" ")
+                if len(child_full_name) < 2:
+                    continue
+                else:
+                    child_last_name = child_full_name[1]
+                    last_names[child_last_name] += 1
+            if len(last_names) <= 1:
+                last_names.clear()
+                continue
+            else:
+                yield "ERROR: US16: Last names of male members of the family are not the same (Family Line #{})".format(family.i_d_line)
+            last_names.clear()
+
     def us17_no_marriage_to_childeren(self):
         """User story 17. Checks for parents not to be married to the children"""
         for person in self.people.values():
@@ -607,7 +673,8 @@ class Classification():
                 wife_family = self.people[family.wife_id].child
                 children_pool = self.families[husb_family].children + self.families[wife_family].children
                 if family.husb_id in children_pool and family.wife_id in children_pool:
-                    yield 'ERROR: FAMILY: US18: Family with ID {} on line {} is a marriage between siblings'.format(family.i_d, family.i_d_line)           
+
+                    yield 'ERROR: FAMILY: US18: Family with ID {} on line {} is a marriage between siblings'.format(family.i_d, family.i_d_line)
 
     def us21_correct_gender(self):
         """Husband in family should be male and wife in family should be female"""
@@ -640,6 +707,28 @@ class Classification():
             else:
                 continue
 
+    def us25_unique_first_names_in_families(self):
+        """No more than one child with the same name and birth date should appear in a family"""
+
+        for family in self.families.values():
+            if len(family.children) <=1:
+                continue
+            else:
+                unique_children = dict()
+                for child in family.children:
+                    if self.people[child].birthday == 'NA' or self.people[child].birthday == None or valid_date(self.people[child].birthday)== False:
+                        continue 
+                    else:
+                        child_name = self.people[child].name
+                        child_birthday= self.people[child].birthday 
+                        
+                        if child_name not in unique_children:
+                            unique_children[child_name] = child_birthday
+                        elif child_name in unique_children and child_birthday == unique_children[child_name]:
+                            yield 'ERROR: US25: Child name {} and birthday {} with ID {} on family ({}) already exist in the family'.format(child_name, child_birthday, self.people[child].i_d, family.i_d)
+                        else:
+                            continue
+
     def us27_individual_ages(self):
         """User story 27: Function that gets the age of a person"""
         for person in self.people.values():
@@ -655,6 +744,29 @@ class Classification():
         for i_d, age in self.us27_individual_ages():
             pt.add_row([i_d, age])
         print('us27: Ages of individuals')
+        print(pt)
+        
+    def us28_siblings_by_age(self):
+        """User story 28: function that returns a siblings in families by decreasing age"""
+        siblings = defaultdict(list)
+        for family in self.families.values():
+            children = defaultdict(int)
+            for person in self.people.values():
+                for child in family.children:
+                    if child == person.i_d:
+                        if person.age >= 0:
+                            children[child]= person.age
+            sorted_children = sorted(children.items(), key=operator.itemgetter(1), reverse=True)
+            siblings[family.i_d] = sorted_children
+        return siblings
+                      
+    def us28_siblings_by_age_table(self):
+        """User Story 28: Function prints us28_siblings_by_age table"""
+        pt = PrettyTable()
+        pt.field_names = ["Family", "Sorted Siblings by Age"]
+        for name, child in self.us28_siblings_by_age().items():
+            pt.add_row([name, child])
+        print("\nUS28: Sorted Siblings by Age")
         print(pt)
     
     def us29_list_deceased(self):
@@ -759,6 +871,32 @@ class Classification():
         
         print("\n\nUS32: People sharing birthdays")
         print(pt)
+
+    def us33_list_orphans(self):
+        """User story 33: function lists all orphaned children: 
+        both parents are dead and the child is under 18 years old"""
+        orphans = list()
+        for person in self.people.values():
+            if person.age == 'NA' or int(person.age) >= 18:
+                continue
+            else:
+                if person.child != 'NA':
+                    mother = self.families[person.child].wife_id
+                    father = self.families[person.child].husb_id
+                    if self.people[mother].alive == False and self.people[father].alive == False:
+                        orphans.append([person.i_d, person.name])
+                    else:
+                        continue
+        return orphans
+
+    def us33_list_orphans_table(self):
+        """User story 33: Function prints pretty table for list of orphans"""
+        pt = PrettyTable()
+        pt.field_names = ['ID', 'Name']
+        for i_d, name in self. us33_list_orphans():
+            pt.add_row([i_d, name])
+        print('US33: List orphans')
+        print(pt)
     
     def date_within(self, dt1, dt2, limit, units):
         """return True if dt1 and dt2 are within units where:
@@ -826,7 +964,71 @@ class Classification():
         
         print("\n\nUS36: People who died in the last 30 days")
         print(pt)
-        
+    
+    def us37_list_recent_survivors(self):
+        """List all living spouses and descendanta of people in a GEDCOM files who died in the last 30 days"""
+        all_living_relatives = defaultdict(list)
+        all_living_children = list()
+
+        for person in self.people.values():
+            if person.alive:
+                continue
+            else:
+                if person.spouse != 'NA' and valid_date(person.death):
+                    persons_deathday = self.date_format(person.death)
+                    if (persons_deathday < datetime.today().date()):
+                        if self.date_within(persons_deathday, datetime.today().date(), 30, "days"):
+                            formatted_name_of_deceased = person.name.replace('/','')
+                            all_living_relatives[person.name].append(formatted_name_of_deceased)
+                            if person.i_d == self.families[person.spouse].wife_id:
+                                if self.people[self.families[person.spouse].husb_id].alive:
+                                    formatted_name_of_spouse = self.people[self.families[person.spouse].husb_id].name.replace('/','')
+                                    all_living_relatives[person.name].append(formatted_name_of_spouse)
+                                else:
+                                    all_living_relatives[person.name].append([])
+                                for child in self.families[person.spouse].children:
+                                    if self.people[child].alive == False:
+                                        continue
+                                    else: 
+                                        unformatted_child_name = self.people[child].name
+                                        formatted_child_name = unformatted_child_name.replace('/', '')
+                                        all_living_children.append(formatted_child_name)
+
+                                all_living_relatives[person.name].append(all_living_children)
+                                all_living_children = []
+
+                            elif person.i_d == self.families[person.spouse].husb_id:
+                                if self.people[self.families[person.spouse].wife_id].alive:
+                                    formatted_name_of_spouse = self.people[self.families[person.spouse].wife_id].name.replace('/','')
+                                    all_living_relatives[person.name].append(formatted_name_of_spouse)
+                                else:
+                                    all_living_relatives[person.name].append([])
+
+                                for child in self.families[person.spouse].children:
+                                    if self.people[child].alive == False:
+                                        continue
+                                    else: 
+                                        unformatted_child_name = self.people[child].name
+                                        formatted_child_name = unformatted_child_name.replace('/', '')
+                                        all_living_children.append(formatted_child_name)
+
+                                all_living_relatives[person.name].append(all_living_children)
+                                all_living_children = []
+                            else:
+                                continue    
+                    else:
+                        continue            
+        return all_living_relatives
+
+    def us37_list_recent_survivors_table(self):
+        """User Story 37: Function prints list_recent_survivors() table"""
+        pt = PrettyTable()
+        pt.field_names = ['Deceased', 'Living Spouse', 'Living Descendants']
+        for values in self.us37_list_recent_survivors().values():
+            pt.add_row(values)    
+        print("\n\nUS37: List of people who died in the last 30 days and their Living Spouses and Descendants")
+        print(pt)
+
     def us38_upcomming_birthdays(self, today):
         """User Story 38: List all the people in a GEDCOM file who's birthdays is in the upcomming 30 days"""
         upcomming_births = defaultdict(list) 
@@ -860,6 +1062,49 @@ class Classification():
             pt.add_row([dt, people])
         
         print("\n\nUS38: People who's birthday is in the next 30 days")
+        print(pt)
+        
+    def us39_upcomming_anniversaries(self, today):
+        """User Story 39: List all the couples in a GEDCOM file who's anniversary is in the upcomming 30 days"""
+        upcomming_anniversaries = defaultdict(list) 
+        today= datetime.strptime(today, '%d %b %Y')
+        d = today + timedelta(days = 30)
+        family_i_d_husb = ""
+        family_i_d_wife = ""
+        for family in self.families.values():
+            within = False
+            for person in self.people.values():
+                if (family.husb_id == person.i_d and person.alive):
+                    family_i_d_husb = family.i_d
+                    husb_name = person.name
+                if (family.wife_id == person.i_d and person.alive):
+                    family_i_d_wife = family.i_d
+                    wife_name = person.name
+            if (family.married == 'NA') or (family.married == None):
+                continue
+            elif valid_date(family.married) and ((family.divorced == None) or (family.divorced == "NA")) and (family_i_d_husb == family_i_d_wife):
+                anniversary = datetime.strptime(family.married, "%d %b %Y").date()
+                anni = anniversary.replace(year=today.year)
+                if (anniversary < today.date()) and (anni < d.date()):
+                    within = ( self.date_within(d.date(), anni, 30, 'days'))
+                elif  (within == False) and (anni < d.date()):
+                    anni = anniversary.replace(year=d.year)
+                    if (anni > today.date()):
+                        within = ( self.date_within(d.date(), anni, 30, 'days'))
+            if within:
+                upcomming_anniversaries[family.married].append(husb_name)
+                upcomming_anniversaries[family.married].append(wife_name)
+            else:
+                continue
+        return upcomming_anniversaries
+    
+    def us39_upcomming_anniversaries_table(self, today):
+        """User Story: 39: Function prints us39_upcomming_anniversaries() table"""
+        pt = PrettyTable()
+        pt.field_names = ['Anniversary', 'Couple']
+        for dt, couple in self.us39_upcomming_anniversaries(today).items():
+            pt.add_row([dt,couple])
+        print("\n\nUS39: Families who's anniversary is in the next 30 days")
         print(pt)
         
     def us42_invalid_date_error(self):
@@ -908,11 +1153,15 @@ def main():
         print(err)
     for err in classify.us07_over150():
         print(err)
+    for err in classify.us08_birth_before_marriage_of_parents():
+        print(err)
     for err in classify.us10_marriage_after14():
         print(err)
     for err in classify.us12_parents_not_too_old():
         print(err)
     for err in classify.us14_multiple_siblings():
+        print(err)
+    for err in classify.us15_fewer_than_15_siblings():
         print(err)
     for err in classify.us17_no_marriage_to_childeren():
         print(err)
@@ -922,17 +1171,24 @@ def main():
         print(err)
     for err in classify.us23_uniquename_and_birthdate():
         print(err)
-        
+    for err in classify.us25_unique_first_names_in_families():
+        print(err)
+    for err in classify.us16_male_last_names():
+        print(err)
+    classify.us42_invalid_date_error()
     classify.us27_ages_table()
+    classify.us28_siblings_by_age_table()
     classify.us29_deceased_table()
     classify.us30_living_married_table()
     classify.us31_singles_table()
     classify.us32_multiple_births_table()
+    classify.us33_list_orphans_table()
     classify.us35_recent_births_table()
     classify.us36_recent_deaths_table()
+    classify.us37_list_recent_survivors_table()
     today = datetime.today().strftime('%d %b %Y')
     classify.us38_upcomming_birthdays_table(today)
-    classify.us42_invalid_date_error()
+    classify.us39_upcomming_anniversaries_table(today)
        
 if __name__ == '__main__':
     main()
